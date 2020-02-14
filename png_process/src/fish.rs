@@ -11,17 +11,17 @@ pub struct Fish {
     pub alive: bool,
 }
 
-const LAND_SCORE_K: f64 = 1.0 / 6000.0;
+const LAND_SCORE_K: f64 = 1.0;
 const FOOD_SCORE_K: f64 = 1.0 / 1000.0;
 const TEMP_SCORE_K: f64 = 1.0;
 const AGE_SCORE_K: f64 = 1.0;
 const NORMAL_K: f64 = 0.1;
 const SCORE_THRESHOLD: f64 = -10.0;
-const FISH_SPAWN_INITIAL: usize = 100000;
+const FISH_SPAWN_INITIAL: usize = 1000000;
 const FISH_MAX_AGE: usize = 17;
 const FISH_MAX_MOVE: i64 = 50;
 const FISH_MIN_MOVE: i64 = 30;
-const FOOD_SCORE_SPREAD_RANGE: i64 = 5;
+const FOOD_SCORE_SPREAD_RANGE: i64 = 20;
 const LAND_SCORE_SPREAD_RANGE: i64 = 50;
 
 fn max_of(x: &Vec<f64>) -> f64 {
@@ -88,7 +88,7 @@ impl LandScore {
                                 continue;
                             }
                             let pos = n_x + n_y * t_map.width as i64;
-                            land_score[pos as usize] += score;
+                            land_score[pos as usize] = score.max(land_score[pos as usize]);
                         }
                     }
                 }
@@ -190,24 +190,30 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
     let mut rng = rand::rngs::SmallRng::from_rng(thread_rng).unwrap();
     let mut fish: Vec<Fish> = vec![];
     println!("spawning fish...");
-
     let initial_map = &map[0];
-    for i in 0..FISH_SPAWN_INITIAL {
-        let x = rng.gen_range(0, initial_map.width) as i64;
-        let y = rng.gen_range(0, initial_map.height) as i64;
-        let age = rng.gen_range(0, FISH_MAX_AGE);
-        if initial_map.is_ocean(x, y) {
-            fish.push(Fish {
-                x,
-                y,
-                age,
-                optimal_temperature: rng.gen_range(9.0, 12.0),
-                alive: true,
-            })
+    let land_score = LandScore::from_map(initial_map);
+    {
+        let _fish = vec![];
+        let living = Living::from_map(initial_map, &_fish);
+        for i in 0..FISH_SPAWN_INITIAL {
+            let x = rng.gen_range(0, initial_map.width) as i64;
+            let y = rng.gen_range(0, initial_map.height) as i64;
+            let age = rng.gen_range(0, FISH_MAX_AGE);
+            let optimal_temperature = rng.gen_range(9.0, 12.0);
+
+            if initial_map.is_ocean(x, y) {
+                if living.score(&mut rng, x, y, optimal_temperature, age, &land_score) >= SCORE_THRESHOLD {
+                    fish.push(Fish {
+                        x,
+                        y,
+                        age,
+                        optimal_temperature,
+                        alive: true,
+                    })
+                }
+            }
         }
     }
-
-    let land_score = LandScore::from_map(initial_map);
 
     println!("{} fish spawned", fish.len());
     let mut id = 0;
