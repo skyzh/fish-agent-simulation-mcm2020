@@ -61,9 +61,6 @@ pub fn loadData() -> Vec<TemperatureMap> {
                 temperature.push(None);
             }
         }
-        if year > 2003 {
-            break;
-        }
         result.push(TemperatureMap {
             temperature,
             width: image.width(),

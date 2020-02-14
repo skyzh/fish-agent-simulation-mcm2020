@@ -8,16 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-library(ncdf4)
-file="sst.mon.anom.nc"
-# open an NetCDF file
-ex.nc <- nc_open(file)
-# set coordinate variable: latitude
-y <- ncvar_get(ex.nc, "lat")
-# set coordinate variable: longitude
-x <- ncvar_get(ex.nc, "lon")  
-# extract SST anomalies
-df <- ncvar_get(ex.nc, ex.nc$var[[1]])
-# close an NetCDF file
-nc_close(ex.nc)
+data = read.csv("png_process/result.csv", header=FALSE)
+colnames(data) = c("year", "month", "day", "temperature")
+plot(data$temperature, type="l")
 ```

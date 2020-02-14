@@ -8,7 +8,7 @@ pub struct Fish {
     pub y: i64,
     pub age: usize,
     pub optimal_temperature: f64,
-    pub alive: bool
+    pub alive: bool,
 }
 
 pub fn one_epoch(map: &Vec<TemperatureMap>) {
@@ -18,7 +18,8 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
     println!("spawning fish...");
     const FISH_SPAWN_INITIAL: usize = 100000;
     const FISH_MAX_AGE: usize = 17;
-    const FISH_MAX_MOVE: i64 = 50;
+    const FISH_MAX_MOVE: i64 = 80;
+    const FISH_MIN_MOVE: i64 = 50;
 
     let initial_map = &map[0];
     for i in 0..FISH_SPAWN_INITIAL {
@@ -31,7 +32,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                 y,
                 age,
                 optimal_temperature: 10.0,
-                alive: true
+                alive: true,
             })
         }
     }
@@ -46,32 +47,37 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         for idx in 0..fish.len() {
             let f = &mut fish[idx];
 
-            // [1.1] Searching within FISH_MAX_MOVE radius the fish
+            // [1.1] Searching within FISH_MAX_MOVE radius the fish, select random points to improve performance
             let mut optimal_place: Option<(f64, i64, i64)> = None;
-            for x_offset in -FISH_MAX_MOVE..FISH_MAX_MOVE + 1 {
-                for y_offset in -FISH_MAX_MOVE..FISH_MAX_MOVE + 1 {
-                    if x_offset * x_offset + y_offset * y_offset > FISH_MAX_MOVE * FISH_MAX_MOVE {
-                        continue;
+            for _random_points_idx in 0..FISH_MIN_MOVE * 10 {
+                let mut x_offset ;
+                let mut y_offset;
+                loop {
+                    x_offset = rng.gen_range(-FISH_MAX_MOVE, FISH_MAX_MOVE);
+                    y_offset =  rng.gen_range(-FISH_MAX_MOVE, FISH_MAX_MOVE);
+                    if x_offset * x_offset + y_offset * y_offset <= FISH_MAX_MOVE * FISH_MAX_MOVE {
+                        break;
                     }
-                    let next_x = f.x as i64 + x_offset;
-                    let next_y = f.y as i64 + y_offset;
-                    if !t_map.in_range(next_x, next_y) {
-                        continue;
-                    }
-                    if !t_map.is_ocean(next_x, next_y) {
-                        continue;
-                    }
-                    let here_temp = t_map.get_temperature(next_x, next_y);
-                    if optimal_place.is_some() {
-                        let temp = optimal_place.unwrap().0;
-                        let cmpa = (temp - f.optimal_temperature).abs();
-                        let cmpb = (here_temp - f.optimal_temperature).abs();
-                        if cmpa > cmpb || cmpa == cmpb && rng.gen::<f64>() < 0.5 {
-                            optimal_place = Some((here_temp, next_x, next_y));
-                        }
-                    } else {
+                }
+
+                let next_x = f.x as i64 + x_offset;
+                let next_y = f.y as i64 + y_offset;
+                if !t_map.in_range(next_x, next_y) {
+                    continue;
+                }
+                if !t_map.is_ocean(next_x, next_y) {
+                    continue;
+                }
+                let here_temp = t_map.get_temperature(next_x, next_y);
+                if optimal_place.is_some() {
+                    let temp = optimal_place.unwrap().0;
+                    let cmpa = (temp - f.optimal_temperature).abs();
+                    let cmpb = (here_temp - f.optimal_temperature).abs();
+                    if cmpa > cmpb || cmpa == cmpb && rng.gen::<f64>() < 0.5 {
                         optimal_place = Some((here_temp, next_x, next_y));
                     }
+                } else {
+                    optimal_place = Some((here_temp, next_x, next_y));
                 }
             }
 
@@ -117,7 +123,6 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                     image.put_pixel(xx as u32, yy as u32, Rgb([r, g, b]));
                 }
             }
-
         }
 
         image.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();

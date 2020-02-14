@@ -2,3 +2,6 @@
 /NASAM
 /.RProj.user
 /.ipynb_checkpoints
+IgnoreList
+.RData
+.Rhistory
