@@ -12,17 +12,19 @@ pub struct Fish {
 }
 
 const LAND_SCORE_K: f64 = 1.0;
-const FOOD_SCORE_K: f64 = 1.0 / 1000.0;
+const FOOD_SCORE_K: f64 = 1.0 / 400.0;
 const TEMP_SCORE_K: f64 = 1.0;
-const AGE_SCORE_K: f64 = 1.0;
+const AGE_SCORE_K: f64 = 0.1;
 const NORMAL_K: f64 = 0.1;
 const SCORE_THRESHOLD: f64 = -10.0;
-const FISH_SPAWN_INITIAL: usize = 1000000;
-const FISH_MAX_AGE: usize = 17;
+const FISH_SPAWN_INITIAL: usize = 100000;
+const FISH_MAX_AGE: usize = 17 * 12;
 const FISH_MAX_MOVE: i64 = 50;
-const FISH_MIN_MOVE: i64 = 30;
+const FISH_MIN_MOVE: i64 = 0;
 const FOOD_SCORE_SPREAD_RANGE: i64 = 20;
 const LAND_SCORE_SPREAD_RANGE: i64 = 50;
+const SPAWN_RATE: f64 = 0.5;
+const OPTIMAL_SPAWN_AGE: usize = 12 * 2;
 
 fn max_of(x: &Vec<f64>) -> f64 {
     let mut r = std::f64::MIN;
@@ -143,8 +145,8 @@ impl<'a> Living<'a> {
         let normal_dist: f64 = rng.sample(rand_distr::StandardNormal);
         normal_dist * NORMAL_K
             + land.land_score[self.pos_at(x, y)] * LAND_SCORE_K
-            + (-(self.t_map.get_temperature(x, y) - optimal_temperature).abs()).exp() * TEMP_SCORE_K
-            - ((FISH_MAX_AGE - age) as f64).exp() * AGE_SCORE_K
+            + -(self.t_map.get_temperature(x, y) - optimal_temperature).abs() * TEMP_SCORE_K
+            - (-((FISH_MAX_AGE - age) as f64) * AGE_SCORE_K).exp()
             + self.food_score[self.pos_at(x, y)] * FOOD_SCORE_K
     }
 
@@ -226,13 +228,12 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         // living.generate_image(&format!("result/living_{}-{}_", t_map.year, t_map.month));
 
         // [1] Fish move to optimal place
-        println!("> moving fish");
 
         let optimal_places: Vec<Option<(f64, i64, i64)>> = fish.iter().map(|f| {
             let mut optimal_place: Option<(f64, i64, i64)> = None;
 
             // [1.1] Searching within FISH_MAX_MOVE radius the fish, select random points to improve performance
-            for _random_points_idx in 0..FISH_MIN_MOVE * 10 {
+            for _random_points_idx in 0..FISH_MAX_MOVE * 10 {
                 let mut x_offset;
                 let mut y_offset;
                 loop {
@@ -281,23 +282,66 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                 // No optimal place found, kill the fish
                 f.alive = false;
             }
+            f.age += 1;
         }
+        println!("> fish moved");
 
         // [2] Spawn new fish
-        println!("> spawning new fish");
+        // println!("> spawning new fish");
+        let mut x = 0;
+
+        for idx in 0..fish.len() {
+            let mut new_fish: Option<Fish> = None;
+            {
+                let f = &fish[idx];
+                if !f.alive {
+                    continue;
+                }
+                if f.age >= OPTIMAL_SPAWN_AGE {
+                    if rng.gen::<f64>() < SPAWN_RATE {
+                        new_fish = Some(Fish {
+                            x: f.x,
+                            y: f.y,
+                            optimal_temperature: f.optimal_temperature,
+                            age: 0,
+                            alive: true,
+                        });
+                    }
+                }
+            };
+            if new_fish.is_some() {
+                x += 1;
+                fish.push(new_fish.unwrap());
+            }
+        }
+        println!("> {} spawned", x);
 
         // [3] Kill some fish
-        println!("> some fish are eaten");
+
+        if t_map.month <= 4 {
+            // println!("> some fish are being eaten");
+
+            fish.shuffle(&mut rng);
+
+            let fish_eaten = rng.gen_range(0.1 * fish.len() as f64, 0.3 * fish.len() as f64) as usize;
+
+            for i in 0..fish_eaten {
+                fish.pop();
+            }
+
+            println!("> {} fish eaten", fish_eaten);
+        }
 
         // [4] Clear dead fish
-        println!("> clear dead fish");
+        // println!("> clear dead fish");
+        let o_len = fish.len();
         fish = fish.into_iter().filter(|fish| fish.alive).collect();
-        println!("> {} fish left in this epoch", fish.len());
+        println!("> {} fish left in this epoch, {} died", fish.len(), o_len - fish.len());
 
         // [5] Plot distribution
-        println!("> plotting...");
+        // println!("> plotting...");
         let mut image = image::RgbImage::new(t_map.width, t_map.height);
-        copy_image(&t_map.path, &mut image);
+        copy_image(&initial_map.path, &mut image);
 
         for idx in 0..fish.len() {
             let f = &fish[idx];
