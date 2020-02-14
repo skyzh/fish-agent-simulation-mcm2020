@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 image = "0.23"
 rand = { version = "0.7.3", features = ["small_rng"] }
+rand_distr = "0.2.2"

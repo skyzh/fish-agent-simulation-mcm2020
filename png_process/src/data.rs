@@ -11,6 +11,7 @@ pub struct TemperatureMap {
     pub path: String
 }
 
+
 impl TemperatureMap {
     pub fn is_ocean(&self, x: i64, y: i64) -> bool {
         let t = &self.temperature[y as usize * self.width as usize + x as usize];
@@ -44,7 +45,7 @@ pub fn loadData() -> Vec<TemperatureMap> {
         }
         let mut image = image::open(path).unwrap();
         let image = image.crop(1185, 60, 1130, 540);
-        // let image = image.resize(image.width() / 5, image.height() / 5, image::imageops::Nearest);
+        // let image = image.resize(image.width() / 2, image.height() / 2, image::imageops::Nearest);
 
         let (year, month) = parse_date_m(&path_str);
         let crop_path = format!("out/{}-{}.png", year, month);
@@ -60,6 +61,9 @@ pub fn loadData() -> Vec<TemperatureMap> {
             } else {
                 temperature.push(None);
             }
+        }
+        if year > 2007 {
+            break;
         }
         result.push(TemperatureMap {
             temperature,
