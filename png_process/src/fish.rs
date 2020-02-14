@@ -17,11 +17,11 @@ const TEMP_SCORE_K: f64 = 1.0;
 const AGE_SCORE_K: f64 = 1.0;
 const NORMAL_K: f64 = 0.1;
 const SCORE_THRESHOLD: f64 = -10.0;
-const FISH_SPAWN_INITIAL: usize = 1000000;
+const FISH_SPAWN_INITIAL: usize = 100000;
 const FISH_MAX_AGE: usize = 17;
 const FISH_MAX_MOVE: i64 = 50;
 const FISH_MIN_MOVE: i64 = 30;
-const FOOD_SCORE_SPREAD_RANGE: i64 = 20;
+const FOOD_SCORE_SPREAD_RANGE: i64 = 5;
 const LAND_SCORE_SPREAD_RANGE: i64 = 50;
 
 fn max_of(x: &Vec<f64>) -> f64 {
