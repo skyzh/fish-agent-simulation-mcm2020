@@ -5,6 +5,7 @@ mod parameters;
 mod utils;
 mod score;
 mod render;
+mod export;
 
 fn main() {
     let data = data::load_data();

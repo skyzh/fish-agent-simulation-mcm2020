@@ -193,7 +193,11 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         // [6] Plot distribution
         // println!("> plotting...");
 
-        let mut img = crate::render::render(t_map, &fish);
+        let mut img = match DRAW_FISH {
+            true => crate::render::render(t_map, &fish),
+            false => crate::render::render(t_map, &vec![])
+        };
+
         if DRAW_GADGET {
             imageproc::drawing::draw_hollow_circle_mut(
                 &mut img,
@@ -209,8 +213,18 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                 format!("{}-{}, Scotland {}", t_map.year, t_map.month, cnt).as_str(),
             );
         }
+
         img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
-        img.save(format!("result/pic{:04}.png", id)).unwrap();
+
+        if OUTPUT_FFMPEG_SERIES {
+            img.save(format!("result/pic{:04}.png", id)).unwrap();
+        }
+
+        if OUTPUT_EPOCH_JSON {
+            let mut file = std::fs::File::create(format!("result/{}-{}.json", t_map.year, t_map.month)).unwrap();
+            crate::export::export(&mut file, &fish).unwrap();
+        }
+
         id += 1;
 
         println!(", done in {:5}ms", begin_time.elapsed().unwrap().as_millis());

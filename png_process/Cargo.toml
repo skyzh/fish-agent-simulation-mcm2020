@@ -12,3 +12,4 @@ rand = { version = "0.7.3", features = ["small_rng"] }
 rand_distr = "0.2.2"
 imageproc = "0.19.2"
 rusttype = "0.8.2"
+palette = "0.5.0"

@@ -1,8 +1,8 @@
 mod parameters_mackerel;
-mod fast_predict;
+mod full_predict;
 
 pub use parameters_mackerel::*;
-pub use fast_predict::*;
+pub use full_predict::*;
 
 pub const SAVE_PREDICT_IMAGE: bool = false;
 pub const BACKGROUND_IMG: &str = "NASAM_AVG.PNG";
@@ -13,3 +13,5 @@ pub const OUTPUT_SCOTLAND_TEMPERATURE: bool = false;
 pub const OUTPUT_EPOCH_JSON: bool = true;
 pub const SAVE_CROP_IMAGE: bool = false;
 pub const DRAW_GADGET: bool = false;
+pub const DRAW_FISH: bool = false;
+pub const OUTPUT_FFMPEG_SERIES: bool = false;

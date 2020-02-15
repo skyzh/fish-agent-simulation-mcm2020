@@ -41,12 +41,20 @@ impl TemperatureMap {
         return true;
     }
     pub fn get_image(&self) -> image::RgbaImage {
+        use palette::{LinSrgb, Hsv, Srgb, Gradient};
+
+        let grad = Gradient::new(vec![
+            LinSrgb::new(30.0 / 255.0, 144.0 / 255.0, 255.0 / 255.0),
+            LinSrgb::new(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0)
+        ]);
+
         let mut image: RgbaImage = RgbaImage::new(self.width, self.height);
         for (x, y, pixel) in image.enumerate_pixels_mut() {
             *pixel = Rgba(match &self.temperature[self.pos_of(x as i64, y as i64)] {
                 Some(t) => {
-                    let tt = temperature_to_u8(*t);
-                    [tt, tt, tt, 255]
+                    let tt = temperature_to_u8(*t) as f64 / 256.0;
+                    let tt = grad.get(tt).into_format();
+                    [tt.red, tt.green, tt.blue, 255]
                 }
                 None => [255, 255, 255, 0]
             })
