@@ -1,10 +1,6 @@
 pub const SCOTLAND_CENTER_X: u32 = 563;
 pub const SCOTLAND_CENTER_Y: u32 = 310;
 pub const SCOTLAND_RADIUS: f64 = 80.0;
-pub const CROP_X: u32 = 1185;
-pub const CROP_Y: u32 = 60;
-pub const CROP_W: u32 = 1130;
-pub const CROP_H: u32 = 540;
 pub const LAND_SCORE_K: f64 = 1.0;
 pub const FOOD_SCORE_K: f64 = 1.0 / 100.0;
 pub const TEMP_SCORE_K: f64 = 1.0;

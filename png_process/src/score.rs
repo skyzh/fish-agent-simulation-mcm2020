@@ -5,6 +5,8 @@ use rand::prelude::*;
 use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb, Rgba};
 use crate::utils::*;
 use rusttype::Font;
+use std::fs::File;
+use std::io::{Write, self};
 
 pub struct Living<'a> {
     pub t_map: &'a TemperatureMap,
@@ -75,6 +77,21 @@ impl LandScore {
             &mut img, Rgba([0, 0, 0, 255]), 0, 0, rusttype::Scale::uniform(24.0), &font,
             format!("min: {}, max: {}", min, max).as_ref());
         img
+    }
+
+    pub fn export(&self, file: &mut File) -> io::Result<()> {
+        file.write(b"{ \"land\": [")?;
+        let mut is_first = true;
+        for i in 0..self.land_score.len() {
+            if is_first {
+                is_first = false;
+            } else {
+                file.write(b",")?;
+            }
+            file.write(format!("{}", self.land_score[i]).as_bytes())?;
+        }
+        file.write(b"] }")?;
+        Ok(())
     }
 }
 
@@ -158,8 +175,22 @@ impl<'a> Living<'a> {
             *pixel = Rgba([tt.red, tt.green, tt.blue, 255]);
         }
         imageproc::drawing::draw_text_mut(
-            &mut img, Rgba([0, 0, 0, 255]), 0, 0, rusttype::Scale::uniform(24.0), &font,
+            &mut img, Rgba([0, 0, 0, 255]), 10, 30, rusttype::Scale::uniform(24.0), &font,
             format!("min: {}, max: {}", min, max).as_ref());
         img
+    }
+    pub fn export(&self, file: &mut File) -> io::Result<()> {
+        file.write(b"{ \"food\": [")?;
+        let mut is_first = true;
+        for i in 0..self.food_score.len() {
+            if is_first {
+                is_first = false;
+            } else {
+                file.write(b",")?;
+            }
+            file.write(format!("{}", self.food_score[i]).as_bytes())?;
+        }
+        file.write(b"] }")?;
+        Ok(())
     }
 }

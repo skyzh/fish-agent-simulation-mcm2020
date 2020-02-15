@@ -1,5 +1,5 @@
 const d3 = require('d3')
-const data = require('./assets/2049-9.json').fish
+const data = require('./assets/2003-6.json').fish
 const _ = require('lodash')
 const split = 5
 

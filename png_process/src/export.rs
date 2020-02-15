@@ -2,6 +2,7 @@ use crate::fish::Fish;
 use std::io;
 use std::fs::File;
 use std::io::Write;
+use crate::score::Living;
 
 fn export_fish(file: &mut File, fish: &Fish) -> io::Result<()> {
     file.write(b"{")?;

@@ -7,6 +7,10 @@ pub use full_predict::*;
 mod fast_predict;
 pub use fast_predict::*;
 
+pub const CROP_X: u32 = 1185;
+pub const CROP_Y: u32 = 60;
+pub const CROP_W: u32 = 1130;
+pub const CROP_H: u32 = 540;
 
 pub const SAVE_PREDICT_IMAGE: bool = false;
 pub const BACKGROUND_IMG: &str = "NASAM_AVG.PNG";
@@ -14,7 +18,7 @@ pub const BACKGROUND_IMG_ORIG: &str = "NASAM_AVG_ORIG.PNG";
 pub const PLOT_FONT: &[u8] = include_bytes!("/Library/Fonts/Arial Unicode.ttf");
 pub const PLOT_FONT_SIZE: f32 = 24.0;
 pub const OUTPUT_SCOTLAND_TEMPERATURE: bool = false;
-pub const OUTPUT_EPOCH_JSON: bool = false;
+pub const OUTPUT_EPOCH_JSON: bool = true;
 pub const SAVE_CROP_IMAGE: bool = false;
 pub const DRAW_GADGET: bool = true;
 pub const DRAW_FISH: bool = true;

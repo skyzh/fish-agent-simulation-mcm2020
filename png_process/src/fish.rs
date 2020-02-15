@@ -54,18 +54,72 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         }
     }
 
+    if OUTPUT_EPOCH_JSON {
+        let mut file = std::fs::File::create("result/land.json").unwrap();
+        land_score.export(&mut file).unwrap();
+    }
+
     println!("{} fish spawned", fish.len());
     let mut id = 0;
     for (map_idx, t_map) in map.iter().enumerate() {
         let begin_time = std::time::SystemTime::now();
         print!("({:03}/{:03}) processing {:04}-{:02}", map_idx, map.len(), t_map.year, t_map.month);
+
+        // [5] Scotland Fish
+        let mut cnt = 0;
+        for f in &fish {
+            let delta_x = f.x as f64 - SCOTLAND_CENTER_X as f64;
+            let delta_y = f.y as f64 - SCOTLAND_CENTER_Y as f64;
+            if delta_x * delta_x + delta_y * delta_y < SCOTLAND_RADIUS * SCOTLAND_RADIUS {
+                cnt += 1;
+            }
+        }
+        print!(", {:6} fish in Scotland", cnt);
+
         // [0] Calculate living index
         // println!("> generating living index");
         let living = Living::from_map(t_map, &fish);
 
+        if OUTPUT_EPOCH_JSON {
+            let mut file = std::fs::File::create(format!("result/{}-{}-living.json", t_map.year, t_map.month)).unwrap();
+            living.export(&mut file);
+            let mut file = std::fs::File::create(format!("result/{}-{}.json", t_map.year, t_map.month)).unwrap();
+            crate::export::export(&mut file, &fish).unwrap();
+        }
+
         if OUTPUT_INDEX_IMAGE {
             let img = living.generate_image();
             img.save(format!("result/food_{}-{}.png", t_map.year, t_map.month)).unwrap();
+        }
+
+        // [6] Plot distribution
+        // println!("> plotting...");
+
+        let mut img = match DRAW_FISH {
+            true => crate::render::render(t_map, &fish),
+            false => crate::render::render(t_map, &vec![])
+        };
+
+        if DRAW_GADGET {
+            imageproc::drawing::draw_hollow_circle_mut(
+                &mut img,
+                (SCOTLAND_CENTER_X as i32, SCOTLAND_CENTER_Y as i32),
+                SCOTLAND_RADIUS as i32,
+                Rgba([0, 168, 204, 255]));
+
+            imageproc::drawing::draw_text_mut(
+                &mut img,
+                Rgba([20, 40, 80, 255]),
+                10, 30, rusttype::Scale::uniform(PLOT_FONT_SIZE),
+                &font,
+                format!("{}-{}, Scotland {}", t_map.year, t_map.month, cnt).as_str(),
+            );
+        }
+
+        img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
+
+        if OUTPUT_FFMPEG_SERIES {
+            img.save(format!("result/pic{:04}.png", id)).unwrap();
         }
 
         // [1] Fish move to optimal place
@@ -188,52 +242,6 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         let o_len = fish.len();
         fish = fish.into_iter().filter(|fish| fish.alive).collect();
         print!(", {:6} fish left in this epoch, {:6} died", fish.len(), o_len - fish.len());
-
-        // [5] Scotland Fish
-        let mut cnt = 0;
-        for f in &fish {
-            let delta_x = f.x as f64 - SCOTLAND_CENTER_X as f64;
-            let delta_y = f.y as f64 - SCOTLAND_CENTER_Y as f64;
-            if delta_x * delta_x + delta_y * delta_y < SCOTLAND_RADIUS * SCOTLAND_RADIUS {
-                cnt += 1;
-            }
-        }
-        print!(", {:6} fish in Scotland", cnt);
-
-        // [6] Plot distribution
-        // println!("> plotting...");
-
-        let mut img = match DRAW_FISH {
-            true => crate::render::render(t_map, &fish),
-            false => crate::render::render(t_map, &vec![])
-        };
-
-        if DRAW_GADGET {
-            imageproc::drawing::draw_hollow_circle_mut(
-                &mut img,
-                (SCOTLAND_CENTER_X as i32, SCOTLAND_CENTER_Y as i32),
-                SCOTLAND_RADIUS as i32,
-                Rgba([0, 168, 204, 255]));
-
-            imageproc::drawing::draw_text_mut(
-                &mut img,
-                Rgba([20, 40, 80, 255]),
-                10, 10, rusttype::Scale::uniform(PLOT_FONT_SIZE),
-                &font,
-                format!("{}-{}, Scotland {}", t_map.year, t_map.month, cnt).as_str(),
-            );
-        }
-
-        img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
-
-        if OUTPUT_FFMPEG_SERIES {
-            img.save(format!("result/pic{:04}.png", id)).unwrap();
-        }
-
-        if OUTPUT_EPOCH_JSON {
-            let mut file = std::fs::File::create(format!("result/{}-{}.json", t_map.year, t_map.month)).unwrap();
-            crate::export::export(&mut file, &fish).unwrap();
-        }
 
         id += 1;
 
