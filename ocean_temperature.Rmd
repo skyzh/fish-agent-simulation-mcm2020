@@ -8,7 +8,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-data = read.csv("png_process/result.csv", header=FALSE)
-colnames(data) = c("year", "month", "day", "temperature")
-plot(data$temperature, type="l")
+data = read.csv("png_process/result.csv")
+t = data$temperature
+lst_data = length(t) + 1
+#for (i in 0:(30*12)) {
+  #year_month = lst_data + i
+  #t = c(t, mean(t[year_month - ((1:5) * 12)]) + 0.001 * i)
+#}
+plot(t, type="l")
 ```

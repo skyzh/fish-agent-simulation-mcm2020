@@ -2,6 +2,7 @@ use rand::prelude::*;
 use crate::data::TemperatureMap;
 use std::ops::Deref;
 use image::Rgb;
+use crate::parameters::*;
 
 pub struct Fish {
     pub x: i64,
@@ -10,21 +11,6 @@ pub struct Fish {
     pub optimal_temperature: f64,
     pub alive: bool,
 }
-
-const LAND_SCORE_K: f64 = 1.0;
-const FOOD_SCORE_K: f64 = 1.0 / 100.0;
-const TEMP_SCORE_K: f64 = 1.0;
-const AGE_SCORE_K: f64 = 0.5;
-const NORMAL_K: f64 = 0.1;
-const SCORE_THRESHOLD: f64 = -10.0;
-const FISH_SPAWN_INITIAL: usize = 100000;
-const FISH_MAX_AGE: usize = 17 * 12;
-const FISH_MAX_MOVE: i64 = 50;
-const FISH_MIN_MOVE: i64 = 0;
-const FOOD_SCORE_SPREAD_RANGE: i64 = 5;
-const LAND_SCORE_SPREAD_RANGE: i64 = 50;
-const SPAWN_RATE: f64 = 0.5;
-const OPTIMAL_SPAWN_AGE: usize = 12 * 2;
 
 fn max_of(x: &Vec<f64>) -> f64 {
     let mut r = std::f64::MIN;

@@ -1,6 +1,7 @@
 use std::{fs, io};
-use image::{GrayImage, GenericImageView};
-use image::imageops::filter3x3;
+use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb};
+use crate::parameters::*;
+use crate::predict::predict_temperature_map;
 
 pub struct TemperatureMap {
     pub temperature: Vec<Option<f64>>,
@@ -8,17 +9,27 @@ pub struct TemperatureMap {
     pub height: u32,
     pub year: i32,
     pub month: i32,
-    pub path: String
+    pub path: String,
 }
 
+#[inline(always)]
+pub fn u8_to_temperature(result: u8) -> f64 {
+    result as f64 / 255.0 * (35.0 + 2.0) - 2.0
+}
+
+#[inline(always)]
+pub fn temperature_to_u8(result: f64) -> u8 { ((result + 2.0) / (35.0 + 2.0) * 255.0) as u8 }
 
 impl TemperatureMap {
     pub fn is_ocean(&self, x: i64, y: i64) -> bool {
         let t = &self.temperature[y as usize * self.width as usize + x as usize];
         return t.is_some();
     }
+    pub fn pos_of(&self, x: i64, y: i64) -> usize {
+        y as usize * self.width as usize + x as usize
+    }
     pub fn get_temperature(&self, x: i64, y: i64) -> f64 {
-        return self.temperature[y as usize * self.width as usize + x as usize].unwrap();
+        return self.temperature[self.pos_of(x, y)].unwrap() + 1.0;
     }
     pub fn in_range(&self, x: i64, y: i64) -> bool {
         if x < 0 || y < 0 {
@@ -29,15 +40,29 @@ impl TemperatureMap {
         }
         return true;
     }
+    pub fn generate_image(&self, path: &str) {
+        let mut image: RgbImage = RgbImage::new(self.width, self.height);
+        for (x, y, pixel) in image.enumerate_pixels_mut() {
+            *pixel = Rgb(match &self.temperature[self.pos_of(x as i64, y as i64)] {
+                Some(t) => {
+                    let tt = temperature_to_u8(*t);
+                    [tt, tt, tt]
+                }
+                None => [255, 255, 255]
+            })
+        }
+        image.save(path).unwrap();
+    }
 }
 
-pub fn loadData() -> Vec<TemperatureMap> {
+pub fn load_data() -> Vec<TemperatureMap> {
     let mut entries = fs::read_dir("../NASAM").unwrap()
         .map(|res| res.map(|e| e.path()))
         .collect::<Result<Vec<_>, io::Error>>().unwrap();
     entries.sort();
     let mut result = vec![];
-    for path in entries {
+    let mut csv_str: String = String::new();
+    for (idx, path) in entries.iter().enumerate() {
         let path = path.as_path();
         let path_str: String = path.to_str().unwrap().to_owned().to_string();
         if !path_str.ends_with(".PNG") {
@@ -45,11 +70,24 @@ pub fn loadData() -> Vec<TemperatureMap> {
         }
         let mut image = image::open(path).unwrap();
         let image = image.crop(1185, 60, 1130, 540);
+
         // let image = image.resize(image.width() / 2, image.height() / 2, image::imageops::Nearest);
 
         let (year, month) = parse_date_m(&path_str);
+
         let crop_path = format!("out/{}-{}.png", year, month);
-        image.save(&crop_path).unwrap();
+        if SAVE_CROP_IMAGE {
+            image.save(&crop_path).unwrap();
+        }
+
+        if OUTPUT_SCOTLAND_TEMPERTURE {
+            let color = image.as_luma8().unwrap().get_pixel(SCOTLAND_CENTER_X, SCOTLAND_CENTER_Y).0[0];
+            if color != 255 {
+                csv_str += format!("{}, {}, {}-{}, {}\n", year, month, year, month, u8_to_temperature(color)).as_ref();
+            } else {
+                csv_str += format!("{}, {}, {}-{}, NaN\n", year, month, year, month).as_ref();
+            }
+        }
 
         let grey = image.as_luma8().unwrap();
 
@@ -57,7 +95,7 @@ pub fn loadData() -> Vec<TemperatureMap> {
         for (x, y, pixel) in grey.enumerate_pixels() {
             let result = pixel.0[0];
             if result != 255 {
-                temperature.push(Some(result as f64 / 255.0 * (35.0 + 2.0) - 2.0));
+                temperature.push(Some(u8_to_temperature(result)));
             } else {
                 temperature.push(None);
             }
@@ -69,11 +107,22 @@ pub fn loadData() -> Vec<TemperatureMap> {
             height: image.height(),
             year,
             month,
-            path: crop_path
+            path: crop_path,
         });
-        println!("{}-{} imported, map size {}*{}", year, month, image.width(), image.height());
+        println!("({}/{}) {}-{} imported, map size {}*{}", idx, entries.len(), year, month, image.width(), image.height());
     }
     println!("{} data imported", result.len());
+    for i in 0..PREDICT_MONTH {
+        let m = predict_temperature_map(&result, PREDICT_LOOK_BACKWARD_YEAR);
+        println!("({}/{}) {}-{} predicted", i, PREDICT_MONTH, m.year, m.month);
+        if SAVE_PREDICT_IMAGE {
+            m.generate_image(format!("out/predict_{}-{}.png", m.year, m.month).as_str());
+        }
+        result.push(m);
+    }
+    if OUTPUT_SCOTLAND_TEMPERTURE {
+        println!("\n\n{}\n\n", csv_str);
+    }
     result
 }
 
