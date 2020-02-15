@@ -334,7 +334,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
 
             fish.shuffle(&mut rng);
 
-            let fish_eaten = rng.gen_range(0.1 * fish.len() as f64, 0.3 * fish.len() as f64) as usize;
+            let fish_eaten = rng.gen_range(EATEN_RATE_MIN * fish.len() as f64, EATEN_RATE_MAX * fish.len() as f64) as usize;
 
             for i in 0..fish_eaten {
                 fish.pop();
