@@ -80,14 +80,14 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         // println!("> generating living index");
         let living = Living::from_map(t_map, &fish);
 
-        if OUTPUT_EPOCH_JSON {
+        if OUTPUT_EPOCH_JSON && t_map.year >= MAKE_JSON_AFTER as i32 {
             let mut file = std::fs::File::create(format!("result/{}-{}-living.json", t_map.year, t_map.month)).unwrap();
             living.export(&mut file);
             let mut file = std::fs::File::create(format!("result/{}-{}.json", t_map.year, t_map.month)).unwrap();
             crate::export::export(&mut file, &fish).unwrap();
         }
 
-        if OUTPUT_INDEX_IMAGE {
+        if OUTPUT_INDEX_IMAGE && t_map.year >= MAKE_JSON_AFTER as i32 {
             let img = living.generate_image();
             img.save(format!("result/food_{}-{}.png", t_map.year, t_map.month)).unwrap();
         }
@@ -116,10 +116,12 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
             );
         }
 
-        img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
+        if t_map.year >= MAKE_JSON_AFTER as i32 {
+            img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
 
-        if OUTPUT_FFMPEG_SERIES {
-            img.save(format!("result/pic{:04}.png", id)).unwrap();
+            if OUTPUT_FFMPEG_SERIES {
+                img.save(format!("result/pic{:04}.png", id)).unwrap();
+            }
         }
 
         // [1] Fish move to optimal place

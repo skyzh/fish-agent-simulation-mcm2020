@@ -1,5 +1,6 @@
 const d3 = require('d3')
-const data = require('./assets/2003-6.json').fish
+const date = require('./config.js')
+const data = require(`./assets/${date}.json`).fish
 const _ = require('lodash')
 const split = 5
 
@@ -33,9 +34,9 @@ module.exports = (svg) => {
         .attr('cx', d => d.x)
         .attr('cy', d => d.y)
         .attr('fill', d => `rgba(237,85,59,${d.cnt / 30})`)
-        .attr('r', d => split / 2.2)
+        .attr('r', d => split / 10)
         .attr('stroke', d => `rgba(0,0,0,${d.cnt / 30})`)
-        .attr('line-width', 0.5)
+        .attr('stroke-width', 0.1)
     ctx.append('circle')
         .attr('cx', 563)
         .attr('cy', 310)

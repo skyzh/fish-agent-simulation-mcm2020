@@ -1,12 +1,16 @@
-// const data = require('./assets/land.json').land
-const data = require('./assets/2003-6-living.json').food
+const date = require('./config.js')
+// const data = require(`./assets/${date}-living.json`).food
+const data = require('./assets/land.json').land
 require('d3-contour')
 const d3 = require('d3')
+const _ = require('lodash')
 
 module.exports = svg => {
-    const densityData = d3.contours()
+    console.log(_.max(data), _.min(data))
+    const contours = d3.contours()
         .size([1130, 540])
-        .thresholds(5) (data);
+        .thresholds(_.range(0.0, 1.0, 0.1));
+    const densityData = contours(data)
     d3.select(svg)
         .attr('width', '2000px')
         .attr('height', '2000px')
@@ -17,6 +21,6 @@ module.exports = svg => {
           .attr("d", d3.geoPath())
           .attr("fill", "none")
           .attr("stroke", "#69b3a2")
-          .attr("stroke-width", "0.5px")
+          .attr("stroke-width", "0.1px")
           .attr("stroke-linejoin", "round")
 }

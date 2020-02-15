@@ -11,6 +11,28 @@ library(ggplot2)
 ## Scotland Fishing Status
 
 ```{r}
-ggplot(data = map_data("world")) +
-    coord_sf(xlim = c(-102.15, -74.12), ylim = c(7.65, 33.97), expand = FALSE)
+library(magick)
+
+# Plot with base R
+plot(logo)
+
+# Plot image with ggplot2
+library(ggplot2)
+myplot <- image_ggplot(logo)
+myplot + ggtitle("Test plot")
+
+# Show that coordinates are reversed:
+myplot + theme_classic()
+
+# Or add to plot as annotation
+image <- image_fill(logo, 'none')
+raster <- as.raster(image)
+myplot <- qplot(mpg, wt, data = mtcars)
+myplot + annotation_raster(raster, 25, 35, 3, 5)
+
+# Or overplot image using grid
+library(grid)
+qplot(speed, dist, data = cars, geom = c("point", "smooth"))
+grid.raster(image)
+
 ```
