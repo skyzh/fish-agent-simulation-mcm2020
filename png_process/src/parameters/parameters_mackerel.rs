@@ -19,23 +19,7 @@ pub const FOOD_SCORE_SPREAD_RANGE: i64 = 5;
 pub const LAND_SCORE_SPREAD_RANGE: i64 = 50;
 pub const SPAWN_RATE: f64 = 0.5;
 pub const OPTIMAL_SPAWN_AGE: usize = 12 * 2;
-pub const SAVE_CROP_IMAGE: bool = false;
-pub const OUTPUT_SCOTLAND_TEMPERATURE: bool = false;
 pub const OPTIMAL_TEMPERATURE_LOW: f64 = 9.0;
 pub const OPTIMAL_TEMPERATURE_HIGH: f64 = 10.0;
-
-pub const PREDICT_LOOK_BACKWARD_YEAR: usize = 5;
-pub const PREDICT_MONTH: usize = 30 * 12 + 3;
-pub const DATA_YEAR: i32 = 2021;
-
-/*
-pub const PREDICT_LOOK_BACKWARD_YEAR: usize = 1;
-pub const PREDICT_MONTH: usize = 1;
-pub const DATA_YEAR: i32 = 2003;
-*/
-
-pub const SAVE_PREDICT_IMAGE: bool = false;
-pub const BACKGROUND_IMG: &str = "NASAM_AVG.PNG";
-pub const BACKGROUND_IMG_ORIG: &str = "NASAM_AVG_ORIG.PNG";
-pub const PLOT_FONT: &[u8] = include_bytes!("/Library/Fonts/Arial Unicode.ttf");
-pub const PLOT_FONT_SIZE: f32 = 24.0;
+pub const EATEN_RATE_MIN: f64 = 0.1;
+pub const EATEN_RATE_MAX: f64 = 0.3;

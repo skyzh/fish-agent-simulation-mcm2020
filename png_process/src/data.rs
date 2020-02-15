@@ -1,5 +1,5 @@
 use std::{fs, io};
-use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb};
+use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb, Rgba};
 use crate::parameters::*;
 use crate::predict::predict_temperature_map;
 
@@ -40,18 +40,21 @@ impl TemperatureMap {
         }
         return true;
     }
-    pub fn generate_image(&self, path: &str) {
-        let mut image: RgbImage = RgbImage::new(self.width, self.height);
+    pub fn get_image(&self) -> image::RgbaImage {
+        let mut image: RgbaImage = RgbaImage::new(self.width, self.height);
         for (x, y, pixel) in image.enumerate_pixels_mut() {
-            *pixel = Rgb(match &self.temperature[self.pos_of(x as i64, y as i64)] {
+            *pixel = Rgba(match &self.temperature[self.pos_of(x as i64, y as i64)] {
                 Some(t) => {
                     let tt = temperature_to_u8(*t);
-                    [tt, tt, tt]
+                    [tt, tt, tt, 255]
                 }
-                None => [255, 255, 255]
+                None => [255, 255, 255, 0]
             })
         }
-        image.save(path).unwrap();
+        image
+    }
+    pub fn generate_image(&self, path: &str) {
+        self.get_image().save(path).unwrap();
     }
 }
 

@@ -2,6 +2,9 @@ mod data;
 mod fish;
 mod predict;
 mod parameters;
+mod utils;
+mod score;
+mod render;
 
 fn main() {
     let data = data::load_data();

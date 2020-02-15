@@ -1,0 +1,16 @@
+---
+title: "Scotland Fishing"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## Scotland Fishing Status
+
+```{r}
+ggplot(data = map_data("world")) +
+    coord_sf(xlim = c(-102.15, -74.12), ylim = c(7.65, 33.97), expand = FALSE)
+```
