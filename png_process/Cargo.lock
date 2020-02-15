@@ -431,6 +431,7 @@ dependencies = [
  "imageproc",
  "rand 0.7.3",
  "rand_distr",
+ "rusttype 0.8.2",
 ]
 
 [[package]]

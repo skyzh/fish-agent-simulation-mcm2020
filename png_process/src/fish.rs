@@ -3,6 +3,7 @@ use crate::data::TemperatureMap;
 use std::ops::Deref;
 use image::Rgb;
 use crate::parameters::*;
+use rusttype::Font;
 
 pub struct Fish {
     pub x: i64,
@@ -187,6 +188,9 @@ impl<'a> Living<'a> {
 }
 
 pub fn one_epoch(map: &Vec<TemperatureMap>) {
+    let font_data: &[u8] = PLOT_FONT;
+    let font: Font<'static> = Font::from_bytes(font_data).unwrap();
+
     let mut thread_rng = rand::thread_rng();
     let mut rng = rand::rngs::SmallRng::from_rng(thread_rng).unwrap();
     let mut fish: Vec<Fish> = vec![];
@@ -372,21 +376,27 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                     if xx < 0 || yy < 0 || xx >= t_map.width as i64 || yy >= t_map.height as i64 {
                         continue;
                     }
-                    let [mut r, mut g, mut b] = img.get_pixel(xx as u32, yy as u32).0;
-                    if r as usize + 20 <= 255 {
-                        r += 20;
-                    }
-
-                    img.put_pixel(xx as u32, yy as u32, Rgb([r, g, b]));
+                    let [r, g, b] = img.get_pixel(xx as u32, yy as u32).0;
+                    let mut r = r as usize + 20;
+                    r = r.min(255);
+                    img.put_pixel(xx as u32, yy as u32, Rgb([r as u8, g as u8, b as u8]));
                 }
             }
         }
 
-        let img = imageproc::drawing::draw_hollow_circle(
-            &img,
+        imageproc::drawing::draw_hollow_circle_mut(
+            &mut img,
             (SCOTLAND_CENTER_X as i32, SCOTLAND_CENTER_Y as i32),
             SCOTLAND_RADIUS as i32,
-            Rgb([0, 255, 0]));
+            Rgb([0, 168, 204]));
+
+        imageproc::drawing::draw_text_mut(
+            &mut img,
+            Rgb([20, 40, 80]),
+            10, 10, rusttype::Scale::uniform(PLOT_FONT_SIZE),
+            &font,
+            format!("{}-{}, Scotland {}", t_map.year, t_map.month, cnt).as_str(),
+        );
 
         img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
         img.save(format!("result/pic{:04}.png", id)).unwrap();

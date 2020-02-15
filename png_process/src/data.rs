@@ -29,7 +29,7 @@ impl TemperatureMap {
         y as usize * self.width as usize + x as usize
     }
     pub fn get_temperature(&self, x: i64, y: i64) -> f64 {
-        return self.temperature[self.pos_of(x, y)].unwrap() + 1.0;
+        return self.temperature[self.pos_of(x, y)].unwrap();
     }
     pub fn in_range(&self, x: i64, y: i64) -> bool {
         if x < 0 || y < 0 {
