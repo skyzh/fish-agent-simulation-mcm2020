@@ -204,7 +204,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
             let x = rng.gen_range(0, initial_map.width - 1) as i64;
             let y = rng.gen_range(0, initial_map.height - 1) as i64;
             let age = rng.gen_range(0, FISH_MAX_AGE);
-            let optimal_temperature = rng.gen_range(9.0, 10.0);
+            let optimal_temperature = rng.gen_range(OPTIMAL_TEMPERATURE_LOW, OPTIMAL_TEMPERATURE_HIGH);
 
             if initial_map.is_ocean(x, y) {
                 if living.score(&mut rng, x, y, optimal_temperature, age, &land_score) >= SCORE_THRESHOLD {

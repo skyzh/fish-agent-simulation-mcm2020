@@ -21,7 +21,8 @@ pub const SPAWN_RATE: f64 = 0.5;
 pub const OPTIMAL_SPAWN_AGE: usize = 12 * 2;
 pub const SAVE_CROP_IMAGE: bool = false;
 pub const OUTPUT_SCOTLAND_TEMPERTURE: bool = false;
-
+pub const OPTIMAL_TEMPERATURE_LOW: f64 = 9.0;
+pub const OPTIMAL_TEMPERATURE_HIGH: f64 = 10.0;
 
 pub const PREDICT_LOOK_BACKWARD_YEAR: usize = 5;
 pub const PREDICT_MONTH: usize = 30 * 12 + 3;
