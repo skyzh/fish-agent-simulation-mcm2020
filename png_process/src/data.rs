@@ -57,7 +57,7 @@ impl TemperatureMap {
 
 fn process_background() {
     let mut image = image::open(BACKGROUND_IMG_ORIG).unwrap();
-    let image = image.crop(1185, 60, 1130, 540);
+    let image = image.crop(CROP_X, CROP_Y, CROP_W, CROP_H);
     image.save(BACKGROUND_IMG);
 }
 
@@ -76,7 +76,7 @@ pub fn load_data() -> Vec<TemperatureMap> {
             continue;
         }
         let mut image = image::open(path).unwrap();
-        let image = image.crop(1185, 60, 1130, 540);
+        let image = image.crop(CROP_X, CROP_Y, CROP_W, CROP_H);
 
         // let image = image.resize(image.width() / 2, image.height() / 2, image::imageops::Nearest);
 

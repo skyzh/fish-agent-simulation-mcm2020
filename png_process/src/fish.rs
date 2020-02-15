@@ -350,8 +350,8 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         // [5] Scotland Fish
         let mut cnt = 0;
         for f in &fish {
-            let delta_x = f.x as f64 - SCOTLAND_CENTER_Y as f64;
-            let delta_y = f.y as f64 - SCOTLAND_CENTER_X as f64;
+            let delta_x = f.x as f64 - SCOTLAND_CENTER_X as f64;
+            let delta_y = f.y as f64 - SCOTLAND_CENTER_Y as f64;
             if delta_x * delta_x + delta_y * delta_y < SCOTLAND_RADIUS * SCOTLAND_RADIUS {
                 cnt += 1;
             }
@@ -360,8 +360,8 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
 
         // [6] Plot distribution
         // println!("> plotting...");
-        let mut image = image::RgbImage::new(t_map.width, t_map.height);
-        copy_image(BACKGROUND_IMG, &mut image);
+        let mut img: image::RgbImage = image::RgbImage::new(t_map.width, t_map.height);
+        copy_image(BACKGROUND_IMG, &mut img);
 
         for idx in 0..fish.len() {
             let f = &fish[idx];
@@ -372,18 +372,24 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                     if xx < 0 || yy < 0 || xx >= t_map.width as i64 || yy >= t_map.height as i64 {
                         continue;
                     }
-                    let [mut r, mut g, mut b] = image.get_pixel(xx as u32, yy as u32).0;
+                    let [mut r, mut g, mut b] = img.get_pixel(xx as u32, yy as u32).0;
                     if r as usize + 20 <= 255 {
                         r += 20;
                     }
 
-                    image.put_pixel(xx as u32, yy as u32, Rgb([r, g, b]));
+                    img.put_pixel(xx as u32, yy as u32, Rgb([r, g, b]));
                 }
             }
         }
 
-        image.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
-        image.save(format!("result/pic{:04}.png", id)).unwrap();
+        let img = imageproc::drawing::draw_hollow_circle(
+            &img,
+            (SCOTLAND_CENTER_X as i32, SCOTLAND_CENTER_Y as i32),
+            SCOTLAND_RADIUS as i32,
+            Rgb([0, 255, 0]));
+
+        img.save(format!("result/{}-{}.png", t_map.year, t_map.month)).unwrap();
+        img.save(format!("result/pic{:04}.png", id)).unwrap();
         id += 1;
 
         println!(", done in {:5}ms", begin_time.elapsed().unwrap().as_millis());
