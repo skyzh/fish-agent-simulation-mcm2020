@@ -55,7 +55,14 @@ impl TemperatureMap {
     }
 }
 
+fn process_background() {
+    let mut image = image::open(BACKGROUND_IMG_ORIG).unwrap();
+    let image = image.crop(1185, 60, 1130, 540);
+    image.save(BACKGROUND_IMG);
+}
+
 pub fn load_data() -> Vec<TemperatureMap> {
+    process_background();
     let mut entries = fs::read_dir("../NASAM").unwrap()
         .map(|res| res.map(|e| e.path()))
         .collect::<Result<Vec<_>, io::Error>>().unwrap();
@@ -100,7 +107,9 @@ pub fn load_data() -> Vec<TemperatureMap> {
                 temperature.push(None);
             }
         }
-
+        if year > DATA_YEAR {
+            break;
+        }
         result.push(TemperatureMap {
             temperature,
             width: image.width(),
@@ -112,8 +121,9 @@ pub fn load_data() -> Vec<TemperatureMap> {
         println!("({}/{}) {}-{} imported, map size {}*{}", idx, entries.len(), year, month, image.width(), image.height());
     }
     println!("{} data imported", result.len());
+    let predict_begin = result.len();
     for i in 0..PREDICT_MONTH {
-        let m = predict_temperature_map(&result, PREDICT_LOOK_BACKWARD_YEAR);
+        let m = predict_temperature_map(&result, PREDICT_LOOK_BACKWARD_YEAR, predict_begin);
         println!("({}/{}) {}-{} predicted", i, PREDICT_MONTH, m.year, m.month);
         if SAVE_PREDICT_IMAGE {
             m.generate_image(format!("out/predict_{}-{}.png", m.year, m.month).as_str());

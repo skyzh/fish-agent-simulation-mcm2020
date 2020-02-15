@@ -39,7 +39,7 @@ pub struct LandScore {
     pub land_score: Vec<f64>,
 }
 
-fn copy_image(path: &String, image: &mut image::RgbImage) {
+fn copy_image(path: &str, image: &mut image::RgbImage) {
     let image_original = image::open(path).unwrap();
     let image_original = image_original.as_luma8().unwrap();
 
@@ -136,6 +136,19 @@ impl<'a> Living<'a> {
             + self.food_score[self.pos_at(x, y)] * FOOD_SCORE_K
     }
 
+    pub fn debug_score(&self, rng: &mut SmallRng, x: i64, y: i64, optimal_temperature: f64, age: usize, land: &LandScore) {
+        let land_score = land.land_score[self.pos_at(x, y)];
+        let land_score_normal = land_score * LAND_SCORE_K;
+        let temp = -(self.t_map.get_temperature(x, y) - optimal_temperature).abs();
+        let temp_normal = temp * TEMP_SCORE_K;
+        let age = -(-((FISH_MAX_AGE - age) as f64) * AGE_SCORE_K).exp();
+        let food_score = self.food_score[self.pos_at(x, y)];
+        let food_score_normal = food_score * FOOD_SCORE_K;
+        println!("land {} -> {} | temp {} -> {} | age {} | food {} -> {}",
+                 land_score, land_score_normal,
+                 temp, temp_normal, age, food_score, food_score_normal);
+    }
+
     /*
     pub fn generate_image(&self, path_prefix: &String) {
         let mut image_land: image::RgbImage = image::RgbImage::new(self.width, self.height);
@@ -207,7 +220,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
     let mut id = 0;
     for (map_idx, t_map) in map.iter().enumerate() {
         let begin_time = std::time::SystemTime::now();
-        print!("({}/{}) processing {}-{}", map_idx, map.len(), t_map.year, t_map.month);
+        print!("({:03}/{:03}) processing {:04}-{:02}", map_idx, map.len(), t_map.year, t_map.month);
         // [0] Calculate living index
         // println!("> generating living index");
         let living = Living::from_map(t_map, &fish);
@@ -246,6 +259,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                 if !t_map.is_ocean(next_x, next_y) {
                     continue;
                 }
+
                 let here_score = living.score(&mut rng, next_x, next_y, f.optimal_temperature, f.age, &land_score);
                 if optimal_place.is_some() {
                     let score = optimal_place.unwrap().0;
@@ -307,7 +321,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                 fish.push(new_fish.unwrap());
             }
         }
-        print!(", {} spawned", x);
+        print!(", {:6} spawned", x);
 
         // [3] Kill some fish
 
@@ -322,19 +336,32 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
                 fish.pop();
             }
 
-            print!(", {} fish eaten", fish_eaten);
+            print!(", {:6} fish eaten", fish_eaten);
+        } else {
+            print!(", {:>6} fish eaten", "no");
         }
 
         // [4] Clear dead fish
         // println!("> clear dead fish");
         let o_len = fish.len();
         fish = fish.into_iter().filter(|fish| fish.alive).collect();
-        print!(", {} fish left in this epoch, {} died", fish.len(), o_len - fish.len());
+        print!(", {:6} fish left in this epoch, {:6} died", fish.len(), o_len - fish.len());
 
-        // [5] Plot distribution
+        // [5] Scotland Fish
+        let mut cnt = 0;
+        for f in &fish {
+            let delta_x = f.x as f64 - SCOTLAND_CENTER_Y as f64;
+            let delta_y = f.y as f64 - SCOTLAND_CENTER_X as f64;
+            if delta_x * delta_x + delta_y * delta_y < SCOTLAND_RADIUS * SCOTLAND_RADIUS {
+                cnt += 1;
+            }
+        }
+        print!(", {:6} fish in Scotland", cnt);
+
+        // [6] Plot distribution
         // println!("> plotting...");
         let mut image = image::RgbImage::new(t_map.width, t_map.height);
-        copy_image(&initial_map.path, &mut image);
+        copy_image(BACKGROUND_IMG, &mut image);
 
         for idx in 0..fish.len() {
             let f = &fish[idx];
@@ -359,6 +386,6 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         image.save(format!("result/pic{:04}.png", id)).unwrap();
         id += 1;
 
-        println!(", done in {}ms", begin_time.elapsed().unwrap().as_millis());
+        println!(", done in {:5}ms", begin_time.elapsed().unwrap().as_millis());
     }
 }

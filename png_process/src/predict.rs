@@ -1,6 +1,7 @@
 use crate::data::TemperatureMap;
+use crate::parameters::*;
 
-pub fn predict_temperature_map(t_maps: &Vec<TemperatureMap>, mean_year: usize) -> TemperatureMap {
+pub fn predict_temperature_map(t_maps: &Vec<TemperatureMap>, mean_year: usize, predict_start: usize) -> TemperatureMap {
     let mut tt: Vec<Option<f64>>;
     assert!(mean_year >= 1);
     let idx = t_maps.len() - 12;
@@ -16,7 +17,7 @@ pub fn predict_temperature_map(t_maps: &Vec<TemperatureMap>, mean_year: usize) -
                     None => None
                 },
                 None => None
-            }
+            };
         }
     }
     TemperatureMap {
@@ -24,7 +25,7 @@ pub fn predict_temperature_map(t_maps: &Vec<TemperatureMap>, mean_year: usize) -
         width: t_maps.last().unwrap().width,
         height: t_maps.last().unwrap().height,
         temperature: tt.into_iter().map(|x| match x {
-            Some(x) => Some(x / mean_year as f64 + 0.001 * (t_maps.len() - PREDICT_START) as f64),
+            Some(x) => Some(x / mean_year as f64 + 0.001 * (t_maps.len() - predict_start) as f64),
             None => None
         }).collect(),
         year: prev_yr.year + 1,
