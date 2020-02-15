@@ -27,4 +27,4 @@ pub const DRAW_FISH: bool = true;
 pub const OUTPUT_FFMPEG_SERIES: bool = false;
 pub const OUTPUT_INDEX_IMAGE: bool = true;
 pub const USE_ORIG_BACKGROUND: bool = false;
-pub const MAKE_JSON_AFTER: i64 = 2000;
+pub const MAKE_JSON_AFTER: i64 = 2055;

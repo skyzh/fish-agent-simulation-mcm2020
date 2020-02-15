@@ -1,0 +1,71 @@
+---
+title: "Fishing Condition"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(plyr)
+library(ggplot2)
+```
+
+```{r}
+data = read.csv("./log_process/result_1.csv")
+data2 = read.csv("./log_process/result_2.csv")
+data3 = read.csv("./log_process/result_3.csv")
+
+yr_mean = ddply(data, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
+yr_mean = yr_mean[yr_mean$year > 2003, ]
+yr_mean_1 = ddply(data2, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
+yr_mean_1 = yr_mean_1[yr_mean_1$year > 2003, ]
+yr_mean_2 = ddply(data3, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
+yr_mean_2 = yr_mean_2[yr_mean_2$year > 2003, ]
+#pdf("figure/fish_yr.pdf", width=7, height=4) 
+# plot(left~year, yr_mean, type="o", xlab="Year", ylab="Count", main="Total Fish in Year")
+#dev.off()
+ggplot(yr_mean, aes(year, left)) + 
+  geom_line(linetype = "solid") +
+  labs(title = "Total Fish in Year", y = "Count", x = "Year") +
+  geom_point() +
+  theme(plot.title = element_text(hjust = 0.5))
+ggsave('figure/fish_total.pdf', width=7, height=4)
+```
+
+```{r}
+# pdf("figure/fish_yr.pdf", width=7, height=4) 
+ggplot(yr_mean, aes(year, scotland)) + 
+  geom_line(linetype = "solid") +
+  labs(title = "Total Fish Available around Scotland", y = "Count", x = "Year") +
+  geom_point() +
+  theme(plot.title = element_text(hjust = 0.5))
+ggsave('figure/fish_available.pdf', width=7, height=4)
+
+ggplot(yr_mean, aes(year, scotland/left)) + 
+  geom_line(linetype = "solid") +
+  labs(title = "Total Fish Available Ratio around Scotland", y = "Scotland / Total", x = "Year") +
+  geom_point() +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave('figure/fish_ratio.pdf', width=7, height=4)
+
+ggplot(yr_mean, aes(year, temperature)) + 
+  geom_line(linetype = "solid") +
+  labs(title = "Average Temperature of Simulating Region", y = "Temperature", x = "Year") +
+  geom_point() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave('figure/fish_temp.pdf', width=7, height=4)
+```
+
+```{r}
+xx = seq(100, 300, by=12)
+ggplot(data[100:300,], aes(factor(id), temperature, group=1)) + 
+  geom_line(linetype = "solid") +
+  labs(title = "Average Temperature of Simulating Region", y = "Temperature", x = "Year") +
+  geom_point() +
+  scale_x_discrete(breaks = xx, labels=data$year[xx]) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave('figure/fish_temp_month.pdf', width=12, height=7)
+```

@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <!-- <img class="float" src="./assets/2049-9.png" /> -->
-    <img class="float" src="./assets/land_score.png" />
-    <svg class="float" ref="d3-svg" />
+    <img class="float" src="./assets/2040-8.png" />
     <img class="float" src="./assets/NASAM_AVG.png" />
+    <svg class="float" ref="d3-svg" />
   </div>
 </template>
 
@@ -20,8 +20,8 @@ export default class App extends Vue {
   @Ref("d3-svg") readonly svg!: SVGElement;
   mounted() {
     renderGrid(this.svg)
-    // renderFish(this.svg)
-    renderLand(this.svg)
+    renderFish(this.svg)
+    // renderLand(this.svg)
   }
 }
 </script>
