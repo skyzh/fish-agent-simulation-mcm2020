@@ -124,6 +124,8 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
             }
         }
 
+        print!(", {:.3} C", living.avg_temp());
+
         // [1] Fish move to optimal place
 
         let optimal_places: Vec<Option<(f64, i64, i64)>> = fish.iter().map(|f| {
@@ -244,7 +246,6 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         let o_len = fish.len();
         fish = fish.into_iter().filter(|fish| fish.alive).collect();
         print!(", {:6} fish left in this epoch, {:6} died", fish.len(), o_len - fish.len());
-
         id += 1;
 
         println!(", done in {:5}ms", begin_time.elapsed().unwrap().as_millis());

@@ -4,10 +4,10 @@ pub use parameters_mackerel::*;
 mod full_predict;
 pub use full_predict::*;
 
-/*
+
 mod fast_predict;
-pub use fast_predict::*;
-*/
+//pub use fast_predict::*;
+
 
 pub const CROP_X: u32 = 1185;
 pub const CROP_Y: u32 = 60;
@@ -20,11 +20,11 @@ pub const BACKGROUND_IMG_ORIG: &str = "NASAM_AVG_ORIG.PNG";
 pub const PLOT_FONT: &[u8] = include_bytes!("/Library/Fonts/Arial Unicode.ttf");
 pub const PLOT_FONT_SIZE: f32 = 24.0;
 pub const OUTPUT_SCOTLAND_TEMPERATURE: bool = false;
-pub const OUTPUT_EPOCH_JSON: bool = true;
+pub const OUTPUT_EPOCH_JSON: bool = false;
 pub const SAVE_CROP_IMAGE: bool = false;
-pub const DRAW_GADGET: bool = false;
-pub const DRAW_FISH: bool = false;
+pub const DRAW_GADGET: bool = true;
+pub const DRAW_FISH: bool = true;
 pub const OUTPUT_FFMPEG_SERIES: bool = false;
 pub const OUTPUT_INDEX_IMAGE: bool = true;
 pub const USE_ORIG_BACKGROUND: bool = false;
-pub const MAKE_JSON_AFTER: i64 = 2051;
+pub const MAKE_JSON_AFTER: i64 = 2000;

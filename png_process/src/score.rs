@@ -193,4 +193,15 @@ impl<'a> Living<'a> {
         file.write(b"] }")?;
         Ok(())
     }
+    pub fn avg_temp(&self) -> f64 {
+        let mut sum = 0.0;
+        let mut n = 0;
+        for i in &self.t_map.temperature {
+            if i.is_some() {
+                sum += i.unwrap();
+                n += 1;
+            }
+        }
+        sum / n as f64
+    }
 }

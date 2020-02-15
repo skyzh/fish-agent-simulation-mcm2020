@@ -3,6 +3,7 @@ use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb, Rgba};
 use crate::parameters::*;
 use crate::predict::predict_temperature_map;
 use crate::utils::*;
+use crate::score::Living;
 
 pub struct TemperatureMap {
     pub temperature: Vec<Option<f64>>,
@@ -136,7 +137,7 @@ pub fn load_data() -> Vec<TemperatureMap> {
     let predict_begin = result.len();
     for i in 0..PREDICT_MONTH {
         let m = predict_temperature_map(&result, PREDICT_LOOK_BACKWARD_YEAR, predict_begin);
-        println!("({}/{}) {}-{} predicted", i, PREDICT_MONTH, m.year, m.month);
+        // println!("({}/{}) {}-{} predicted", i, PREDICT_MONTH, m.year, m.month);
         if SAVE_PREDICT_IMAGE {
             m.generate_image(format!("out/predict_{}-{}.png", m.year, m.month).as_str());
         }
