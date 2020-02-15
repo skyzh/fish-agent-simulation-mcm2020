@@ -2,6 +2,9 @@ use crate::fish::*;
 use crate::parameters::*;
 use crate::data::*;
 use rand::prelude::*;
+use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb, Rgba};
+use crate::utils::*;
+use rusttype::Font;
 
 pub struct Living<'a> {
     pub t_map: &'a TemperatureMap,
@@ -34,7 +37,7 @@ impl LandScore {
                             if !t_map.is_ocean(n_x, n_y) {
                                 continue;
                             }
-                            let score = (x_offset * x_offset + y_offset * y_offset) as f64
+                            let score = 1.0 - (x_offset * x_offset + y_offset * y_offset) as f64
                                 / LAND_SCORE_SPREAD_RANGE as f64
                                 / LAND_SCORE_SPREAD_RANGE as f64;
                             if score < 0.0 {
@@ -49,6 +52,29 @@ impl LandScore {
         }
 
         Self { land_score }
+    }
+
+    pub fn generate_image(&self, t_map: &TemperatureMap) -> image::RgbaImage {
+        use palette::{LinSrgb, Hsv, Srgb, Gradient};
+
+        let font_data: &[u8] = PLOT_FONT;
+        let font: Font<'static> = Font::from_bytes(font_data).unwrap();
+
+        let grad = get_gradient();
+
+        let min = min_of(&self.land_score);
+        let max = max_of(&self.land_score);
+
+        let mut img: RgbaImage = RgbaImage::new(t_map.width, t_map.height);
+        for (x, y, pixel) in img.enumerate_pixels_mut() {
+            let tt = (self.land_score[t_map.pos_at(x as i64, y as i64)] - min) / (max - min);
+            let tt = grad.get(tt as f32).into_format();
+            *pixel = Rgba([tt.red, tt.green, tt.blue, 255]);
+        }
+        imageproc::drawing::draw_text_mut(
+            &mut img, Rgba([0, 0, 0, 255]), 0, 0, rusttype::Scale::uniform(24.0), &font,
+            format!("min: {}, max: {}", min, max).as_ref());
+        img
     }
 }
 
@@ -114,39 +140,26 @@ impl<'a> Living<'a> {
                  temp, temp_normal, age, food_score, food_score_normal);
     }
 
-    /*
-    pub fn generate_image(&self, path_prefix: &String) {
-        let mut image_land: image::RgbImage = image::RgbImage::new(self.width, self.height);
-        copy_image(&self.t_map.path, &mut image_land);
+    pub fn generate_image(&self) -> image::RgbaImage {
+        use palette::{LinSrgb, Hsv, Srgb, Gradient};
 
-        let min = min_of(&self.land_score);
-        let max = max_of(&self.land_score);
-        for (x, y, pixel) in image_land.enumerate_pixels_mut() {
-            let [mut r, mut g, mut b] = pixel.0;
-            let score = self.land_score[self.pos_at(x as i64, y as i64)];
-            let score = (score - min) / (max - min);
-            let mut x = (score * 255.0).floor();
-            b = x as u8;
-            *pixel = Rgb([r, g, b]);
-        }
-        println!("land score {}~{}", min, max);
-        image_land.save(format!("{}_land.png", path_prefix));
+        let font_data: &[u8] = PLOT_FONT;
+        let font: Font<'static> = Font::from_bytes(font_data).unwrap();
 
-        let mut image_food = image::RgbImage::new(self.width, self.height);
-        copy_image(&self.t_map.path, &mut image_food);
+        let grad = get_gradient();
 
         let min = min_of(&self.food_score);
         let max = max_of(&self.food_score);
-        for (x, y, pixel) in image_food.enumerate_pixels_mut() {
-            let [mut r, mut g, mut b] = pixel.0;
-            let score = self.food_score[self.pos_at(x as i64, y as i64)];
-            let score = (score - min) / (max - min);
-            let mut x = (score * 255.0).floor();
-            b = x as u8;
-            *pixel = Rgb([r, g, b]);
+
+        let mut img: RgbaImage = RgbaImage::new(self.width, self.height);
+        for (x, y, pixel) in img.enumerate_pixels_mut() {
+            let tt = (self.food_score[self.pos_at(x as i64, y as i64)] - min) / (max - min);
+            let tt = grad.get(tt as f32).into_format();
+            *pixel = Rgba([tt.red, tt.green, tt.blue, 255]);
         }
-        println!("food score {}~{}", min, max);
-        image_food.save(format!("{}_food.png", path_prefix));
+        imageproc::drawing::draw_text_mut(
+            &mut img, Rgba([0, 0, 0, 255]), 0, 0, rusttype::Scale::uniform(24.0), &font,
+            format!("min: {}, max: {}", min, max).as_ref());
+        img
     }
-    */
 }

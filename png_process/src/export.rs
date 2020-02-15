@@ -5,7 +5,7 @@ use std::io::Write;
 
 fn export_fish(file: &mut File, fish: &Fish) -> io::Result<()> {
     file.write(b"{")?;
-    file.write(format!("\"x\": {}, \"y\": {}, \"age\": {}", fish.x, fish.y, fish.age).as_bytes());
+    file.write(format!("\"x\": {}, \"y\": {}, \"age\": {}", fish.x, fish.y, fish.age).as_bytes())?;
     file.write(b"}")?;
     Ok(())
 }
@@ -17,9 +17,9 @@ pub fn export(file: &mut File, fish: &Vec<Fish>) -> io::Result<()> {
         if is_first {
             is_first = false;
         } else {
-            file.write(b",");
+            file.write(b",")?;
         }
-        export_fish(file, f);
+        export_fish(file, f)?;
     }
     file.write(b"\n] }")?;
     Ok(())

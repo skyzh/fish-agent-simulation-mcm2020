@@ -25,6 +25,12 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
     println!("spawning fish...");
     let initial_map = &map[0];
     let land_score = LandScore::from_map(initial_map);
+
+    if OUTPUT_INDEX_IMAGE {
+        let img = land_score.generate_image(initial_map);
+        img.save("result/land_score.png").unwrap();
+    }
+
     {
         let _fish = vec![];
         let living = Living::from_map(initial_map, &_fish);
@@ -56,7 +62,11 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         // [0] Calculate living index
         // println!("> generating living index");
         let living = Living::from_map(t_map, &fish);
-        // living.generate_image(&format!("result/living_{}-{}_", t_map.year, t_map.month));
+
+        if OUTPUT_INDEX_IMAGE {
+            let img = living.generate_image();
+            img.save(format!("result/food_{}-{}.png", t_map.year, t_map.month)).unwrap();
+        }
 
         // [1] Fish move to optimal place
 

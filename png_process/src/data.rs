@@ -2,6 +2,7 @@ use std::{fs, io};
 use image::{GrayImage, GenericImageView, RgbImage, RgbaImage, Rgb, Rgba};
 use crate::parameters::*;
 use crate::predict::predict_temperature_map;
+use crate::utils::*;
 
 pub struct TemperatureMap {
     pub temperature: Vec<Option<f64>>,
@@ -43,17 +44,14 @@ impl TemperatureMap {
     pub fn get_image(&self) -> image::RgbaImage {
         use palette::{LinSrgb, Hsv, Srgb, Gradient};
 
-        let grad = Gradient::new(vec![
-            LinSrgb::new(30.0 / 255.0, 144.0 / 255.0, 255.0 / 255.0),
-            LinSrgb::new(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0)
-        ]);
+        let grad = get_gradient();
 
         let mut image: RgbaImage = RgbaImage::new(self.width, self.height);
         for (x, y, pixel) in image.enumerate_pixels_mut() {
             *pixel = Rgba(match &self.temperature[self.pos_of(x as i64, y as i64)] {
                 Some(t) => {
                     let tt = temperature_to_u8(*t) as f64 / 256.0;
-                    let tt = grad.get(tt).into_format();
+                    let tt = grad.get(tt as f32).into_format();
                     [tt.red, tt.green, tt.blue, 255]
                 }
                 None => [255, 255, 255, 0]
@@ -63,6 +61,9 @@ impl TemperatureMap {
     }
     pub fn generate_image(&self, path: &str) {
         self.get_image().save(path).unwrap();
+    }
+    pub const fn pos_at(&self, x: i64, y: i64) -> usize {
+        (self.width as i64 * y + x) as usize
     }
 }
 

@@ -4,7 +4,10 @@ use crate::parameters::*;
 use image::Rgba;
 
 pub fn render(t_map: &TemperatureMap, fish: &Vec<Fish>) -> image::RgbaImage {
-    let mut img = t_map.get_image();
+    let mut img = match USE_ORIG_BACKGROUND {
+        false => t_map.get_image(),
+        true => image::open(BACKGROUND_IMG).unwrap().into_rgba()
+    };
 
     for idx in 0..fish.len() {
         let f = &fish[idx];
