@@ -87,7 +87,7 @@ pub fn load_data() -> Vec<TemperatureMap> {
             image.save(&crop_path).unwrap();
         }
 
-        if OUTPUT_SCOTLAND_TEMPERTURE {
+        if OUTPUT_SCOTLAND_TEMPERATURE {
             let color = image.as_luma8().unwrap().get_pixel(SCOTLAND_CENTER_X, SCOTLAND_CENTER_Y).0[0];
             if color != 255 {
                 csv_str += format!("{}, {}, {}-{}, {}\n", year, month, year, month, u8_to_temperature(color)).as_ref();
@@ -130,7 +130,7 @@ pub fn load_data() -> Vec<TemperatureMap> {
         }
         result.push(m);
     }
-    if OUTPUT_SCOTLAND_TEMPERTURE {
+    if OUTPUT_SCOTLAND_TEMPERATURE {
         println!("\n\n{}\n\n", csv_str);
     }
     result

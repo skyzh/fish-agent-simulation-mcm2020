@@ -20,7 +20,7 @@ pub const LAND_SCORE_SPREAD_RANGE: i64 = 50;
 pub const SPAWN_RATE: f64 = 0.5;
 pub const OPTIMAL_SPAWN_AGE: usize = 12 * 2;
 pub const SAVE_CROP_IMAGE: bool = false;
-pub const OUTPUT_SCOTLAND_TEMPERTURE: bool = false;
+pub const OUTPUT_SCOTLAND_TEMPERATURE: bool = false;
 pub const OPTIMAL_TEMPERATURE_LOW: f64 = 9.0;
 pub const OPTIMAL_TEMPERATURE_HIGH: f64 = 10.0;
 
