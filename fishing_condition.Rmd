@@ -16,44 +16,58 @@ data3 = read.csv("./log_process/result_3.csv")
 
 yr_mean = ddply(data, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
 yr_mean = yr_mean[yr_mean$year > 2003, ]
+yr_mean$epoch = rep(1)
 yr_mean_1 = ddply(data2, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
 yr_mean_1 = yr_mean_1[yr_mean_1$year > 2003, ]
+yr_mean_1$epoch = rep(2)
 yr_mean_2 = ddply(data3, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
 yr_mean_2 = yr_mean_2[yr_mean_2$year > 2003, ]
+yr_mean_2$epoch = rep(3)
+yr_mean = rbind(yr_mean, yr_mean_1, yr_mean_2)
+yr_mean$epoch = factor(yr_mean$epoch)
 #pdf("figure/fish_yr.pdf", width=7, height=4) 
 # plot(left~year, yr_mean, type="o", xlab="Year", ylab="Count", main="Total Fish in Year")
 #dev.off()
-ggplot(yr_mean, aes(year, left)) + 
+ggplot(yr_mean, aes(year, left, group=epoch, colour=epoch)) + 
   geom_line(linetype = "solid") +
-  labs(title = "Total Fish in Year", y = "Count", x = "Year") +
+  labs(y = "Count", x = "Year") +
   geom_point() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
 ggsave('figure/fish_total.pdf', width=7, height=4)
 ```
 
 ```{r}
 # pdf("figure/fish_yr.pdf", width=7, height=4) 
-ggplot(yr_mean, aes(year, scotland)) + 
+ggplot(yr_mean, aes(year, scotland, group=epoch, colour=epoch)) + 
   geom_line(linetype = "solid") +
-  labs(title = "Total Fish Available around Scotland", y = "Count", x = "Year") +
+  labs(y = "Count", x = "Year") +
   geom_point() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
+
 ggsave('figure/fish_available.pdf', width=7, height=4)
 
-ggplot(yr_mean, aes(year, scotland/left)) + 
+ggplot(yr_mean, aes(year, scotland/left, group=epoch, colour=epoch)) + 
   geom_line(linetype = "solid") +
-  labs(title = "Total Fish Available Ratio around Scotland", y = "Scotland / Total", x = "Year") +
+  labs(y = "Scotland / Total", x = "Year") +
   geom_point() +
   scale_y_continuous(labels = scales::percent) +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
 
 ggsave('figure/fish_ratio.pdf', width=7, height=4)
 
-ggplot(yr_mean, aes(year, temperature)) + 
+ggplot(yr_mean, aes(year, temperature, group=epoch)) + 
   geom_line(linetype = "solid") +
-  labs(title = "Average Temperature of Simulating Region", y = "Temperature", x = "Year") +
+  labs(y = "Temperature", x = "Year") +
   geom_point() +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_minimal()
 
 ggsave('figure/fish_temp.pdf', width=7, height=4)
 ```
@@ -62,10 +76,12 @@ ggsave('figure/fish_temp.pdf', width=7, height=4)
 xx = seq(100, 300, by=12)
 ggplot(data[100:300,], aes(factor(id), temperature, group=1)) + 
   geom_line(linetype = "solid") +
-  labs(title = "Average Temperature of Simulating Region", y = "Temperature", x = "Year") +
+  labs(y = "Temperature", x = "Year") +
   geom_point() +
   scale_x_discrete(breaks = xx, labels=data$year[xx]) +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_minimal()
 
 ggsave('figure/fish_temp_month.pdf', width=12, height=7)
 ```
