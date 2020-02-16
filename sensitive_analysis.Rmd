@@ -1,0 +1,129 @@
+---
+title: "Sensitive"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(plyr)
+library(zoo)
+library(ggplot2)
+```
+
+```{r}
+d = read.csv("./log_process/lap.csv", header=FALSE)
+colnames(d) = "data"
+plot(density(d$data))
+plot(density(rnorm(10000)))
+```
+
+```{r}
+
+read_from <- function(path) {
+  data = read.csv(path)
+  yr_mean = ddply(data, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
+  yr_mean = yr_mean[yr_mean$year > 2003, ]
+  yr_mean
+}
+
+
+roll_mean_data <- function(data) {
+  x = rollmean(data, k=5)
+  data.frame(x)
+}
+
+read_data <- function(path) {
+  x1 = roll_mean_data(read_from(sprintf("./log_process/result%s_0.1.csv", path)))
+  x1$Noise = rep(0.1)
+  x2 = roll_mean_data(read_from(sprintf("./log_process/result%s_0.5.csv", path)))
+  x2$Noise = rep(0.5)
+  x3 = roll_mean_data(read_from(sprintf("./log_process/result%s_1.0.csv", path)))
+  x3$Noise = rep(1)
+  
+  x = rbind(x1, x2, x3)
+  x
+}
+
+x4 = roll_mean_data(read_from("./log_process/result_R_10.csv"))
+x4$Noise = rep(0.1)
+x4$Type = "Noise"
+x5 = roll_mean_data(read_from("./log_process/result_R_5.csv"))
+x5$Noise = rep(0.5)
+x5$Type = "Noise"
+
+
+x1 = read_data("_N")
+x1$Type="Normal"
+x2 = read_data("_U")
+x2$Type="Uniform"
+x3 = read_data("_L")
+x3$Type="Laplace"
+xx = rbind(x1, x2, x3, x4, x5)
+xx$Noise = factor(xx$Noise)
+xx
+```
+
+```{r}
+ggplot(xx, aes(year, left)) + 
+  geom_line(aes(color = Type, linetype = Noise)) +
+  labs(y = "Count", x = "Year") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
+ggsave('figure/noise_fish_total.pdf', width=6, height=3)
+```
+
+```{r}
+# pdf("figure/fish_yr.pdf", width=7, height=4) 
+ggplot(xx, aes(year, scotland)) + 
+  geom_line(aes(color = Type, linetype = Noise)) +
+  labs(y = "Count", x = "Year") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
+
+ggsave('figure/noise_fish_available.pdf', width=6, height=3)
+
+ggplot(xx, aes(year, scotland/left)) + 
+  geom_line(aes(color = Type, linetype = Noise)) +
+  labs(y = "Scotland / Total", x = "Year") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
+
+ggsave('figure/noise_fish_ratio.pdf', width=6, height=4)
+
+```
+
+```{r}
+xxx = xx[xx$Type != "avg", ]
+ggplot(xxx, aes(year, temperature)) + 
+  geom_line(aes(color = Type, linetype = Noise)) +
+  labs(y = "Temperature", x = "Year") +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_minimal()
+xxx
+ggsave('figure/noise_fish_temp.pdf', width=6, height=3)
+```
+
+```{r}
+data$Type = rep("")
+data[data$year>2019,]$Type = rep("Prediction")
+data[data$year<=2019,]$Type = rep("History")
+x = data[data$year_month=="2019-10",]
+x$Type=rep("Prediction")
+ndata = rbind(data, x)
+xx = seq(100, 300, by=36)
+ggplot(ndata[100:300,], aes(factor(id), temperature, group=1, colour=Type)) + 
+  geom_line(linetype = "solid") +
+  labs(y = "Temperature", x = "Year") +
+  scale_x_discrete(breaks = xx, labels=ndata$year[xx]) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  
+  theme_minimal()
+
+ggsave('figure/fish_temp_month.pdf', width=6, height=4)
+```

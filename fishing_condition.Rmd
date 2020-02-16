@@ -61,27 +61,42 @@ ggplot(yr_mean, aes(year, scotland/left, group=epoch, colour=epoch)) +
 
 ggsave('figure/fish_ratio.pdf', width=7, height=4)
 
-ggplot(yr_mean, aes(year, temperature, group=epoch)) + 
-  geom_line(linetype = "solid") +
-  labs(y = "Temperature", x = "Year") +
-  geom_point() +
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme_minimal()
-
-ggsave('figure/fish_temp.pdf', width=7, height=4)
 ```
 
 ```{r}
-xx = seq(100, 300, by=12)
-ggplot(data[100:300,], aes(factor(id), temperature, group=1)) + 
+yr_mean$Type = rep("")
+yr_mean[yr_mean$year>2019,]$Type = rep("Prediction")
+yr_mean[yr_mean$year<=2019,]$Type = rep("History")
+x = yr_mean[yr_mean$year==2019,]
+x$Type=rep("Prediction")
+yr_mean = rbind(yr_mean, x)
+ggplot(yr_mean, aes(year, temperature, colour=Type)) + 
   geom_line(linetype = "solid") +
   labs(y = "Temperature", x = "Year") +
   geom_point() +
-  scale_x_discrete(breaks = xx, labels=data$year[xx]) +
   theme(plot.margin = unit(c(0,0,0,0), "cm")) +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme_minimal()
 
-ggsave('figure/fish_temp_month.pdf', width=12, height=7)
+ggsave('figure/fish_temp.pdf', width=6, height=2)
+```
+
+```{r}
+data$Type = rep("")
+data[data$year>2019,]$Type = rep("Prediction")
+data[data$year<=2019,]$Type = rep("History")
+x = data[data$year_month=="2019-10",]
+x$Type=rep("Prediction")
+ndata = rbind(data, x)
+xx = seq(100, 300, by=36)
+ggplot(ndata[100:300,], aes(factor(id), temperature, group=1, colour=Type)) + 
+  geom_line(linetype = "solid") +
+  labs(y = "Temperature", x = "Year") +
+  scale_x_discrete(breaks = xx, labels=ndata$year[xx]) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  
+  theme_minimal()
+
+ggsave('figure/fish_temp_month.pdf', width=6, height=2)
 ```
