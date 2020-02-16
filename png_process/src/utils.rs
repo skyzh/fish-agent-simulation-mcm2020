@@ -30,7 +30,7 @@ pub fn get_gradient() -> Gradient<LinSrgb> {
 }
 
 #[inline]
-pub const fn xy_to_long_lat(x: u32, y: u32, base: (u32, u32)) -> (f64, f64) {
+pub fn xy_to_long_lat(x: u32, y: u32, base: (u32, u32)) -> (f64, f64) {
     let n_x = x + base.0;
     let n_y = y + base.1;
     (-179.95 + 0.1 * n_x as f64, 89.95 - 0.1 * n_y as f64)

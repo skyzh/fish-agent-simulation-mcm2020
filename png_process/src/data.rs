@@ -71,7 +71,7 @@ impl TemperatureMap {
 fn process_background() {
     let mut image = image::open(BACKGROUND_IMG_ORIG).unwrap();
     let image = image.crop(CROP_X, CROP_Y, CROP_W, CROP_H);
-    image.save(BACKGROUND_IMG);
+    image.save(BACKGROUND_IMG).unwrap();
 }
 
 pub fn load_data() -> Vec<TemperatureMap> {
@@ -148,7 +148,6 @@ pub fn load_data() -> Vec<TemperatureMap> {
     }
     result
 }
-
 
 fn parse_date_x(path: &String) -> (i32, i32, i32) {
     (path[15..19].to_owned().parse::<i32>().unwrap(),

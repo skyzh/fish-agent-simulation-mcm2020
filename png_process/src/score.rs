@@ -136,6 +136,12 @@ impl<'a> Living<'a> {
     }
 
     pub fn score(&self, rng: &mut SmallRng, x: i64, y: i64, optimal_temperature: f64, age: usize, land: &LandScore) -> f64 {
+        /*
+        let p: f64 = rng.gen();
+        let mut normal_dist = (1.0 - 2.0 * (p - 0.5).abs()).ln();
+        if p < 0.5 {
+            normal_dist = -normal_dist;
+        }*/
         let normal_dist: f64 = rng.sample(rand_distr::StandardNormal);
         normal_dist * NORMAL_K
             + land.land_score[self.pos_at(x, y)] * LAND_SCORE_K
