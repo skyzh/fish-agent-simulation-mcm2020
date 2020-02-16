@@ -82,7 +82,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
 
         if OUTPUT_EPOCH_JSON && t_map.year >= MAKE_JSON_AFTER as i32 {
             let mut file = std::fs::File::create(format!("result/{}-{}-living.json", t_map.year, t_map.month)).unwrap();
-            living.export(&mut file);
+            living.export(&mut file).unwrap();
             let mut file = std::fs::File::create(format!("result/{}-{}.json", t_map.year, t_map.month)).unwrap();
             crate::export::export(&mut file, &fish).unwrap();
         }
@@ -129,6 +129,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
         // [1] Fish move to optimal place
 
         let optimal_places: Vec<Option<(f64, i64, i64)>> = fish.iter().map(|f| {
+            // [1.1] Can fish still live after moving to new location?
             if t_map.is_ocean(f.x, f.y) {
                 let current_score = living.score(&mut rng, f.x, f.y, f.optimal_temperature, f.age, &land_score);
                 if current_score < SCORE_THRESHOLD {
@@ -138,7 +139,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
 
             let mut optimal_place: Option<(f64, i64, i64)> = None;
 
-            // [1.1] Searching within FISH_MAX_MOVE radius the fish, select random points to improve performance
+            // [1.2] Searching within FISH_MAX_MOVE radius the fish, select random points to improve performance
             for _random_points_idx in 0..((FISH_MAX_MOVE as f64).powf(1.5)) as usize {
                 let mut x_offset;
                 let mut y_offset;
@@ -179,7 +180,7 @@ pub fn one_epoch(map: &Vec<TemperatureMap>) {
             if op.is_some() {
                 let place = op.unwrap();
                 if place.0 < SCORE_THRESHOLD {
-                    // Score too low, die
+                    // Optimal place has low score, just die in this round
                     f.alive = false;
                 } else {
                     f.x = place.1;
