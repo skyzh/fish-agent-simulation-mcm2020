@@ -31,20 +31,25 @@ module.exports = (svg) => {
         .append('circle')
         .attr('class', 'fish')
         
-    ctx.selectAll('.fish')
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('fill', d => `rgba(237,85,59,${d.cnt / 30})`)
-        .attr('r', d => split / 10)
-        .attr('stroke', d => `rgba(0,0,0,${d.cnt / 30})`)
-        .attr('stroke-width', 0.1)
-        /*
-    ctx.selectAll('.fish')
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('fill', d => `rgba(237,85,59,${d.cnt / 30})`)
-        .attr('r', d => split / 4)
-        .attr('stroke', d => `rgba(100,100,100,${d.cnt / 30})`)
-        .attr('stroke-width', 0.5)
-        */
+    const renderSmallFish = () => {
+        ctx.selectAll('.fish')
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y)
+            .attr('fill', d => `rgba(237,85,59,${d.cnt / 30})`)
+            .attr('r', split / 10)
+            .attr('stroke', d => `rgba(0,0,0,${d.cnt / 30})`)
+            .attr('stroke-width', 0.1)
+    }
+
+    const renderNormalFish = () => {
+        ctx.selectAll('.fish')
+            .attr('cx', d => d.x)
+            .attr('cy', d => d.y)
+            .attr('fill', d => `rgba(237,85,59,${d.cnt / 30})`)
+            .attr('r', split / 4)
+            .attr('stroke', d => `rgba(100,100,100,${d.cnt / 30})`)
+            .attr('stroke-width', 0.5)
+    }
+
+    renderNormalFish()
 }

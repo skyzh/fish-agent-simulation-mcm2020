@@ -38,8 +38,9 @@ module.exports = svg => {
 
     const densityDataOuter = d3.contours()
         .size([1130, 540])
-        .thresholds([900 * 1000]) (data)
+        .thresholds([800 * 1000]) (data)
 
+        /*
     d3.select(svg)
         .attr('width', '2000px')
         .attr('height', '2000px')
@@ -53,6 +54,7 @@ module.exports = svg => {
           .attr("stroke-width", "1px")
           .attr("stroke-linejoin", "round")
           .attr('stroke-dasharray', '5 5')
+          */
     d3.select(svg)
         .attr('width', '2000px')
         .attr('height', '2000px')
@@ -66,6 +68,7 @@ module.exports = svg => {
         .attr("stroke-width", "1px")
         .attr("stroke-linejoin", "round")
 
+/*
     ctx.append('circle')
         .attr('cx', 563)
         .attr('cy', 310)
@@ -73,4 +76,5 @@ module.exports = svg => {
         .attr('stroke', '#ed553b')
         .attr('stroke-width', "1px")
         .attr('fill', 'none')
+        */
 }
