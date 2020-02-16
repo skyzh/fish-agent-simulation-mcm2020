@@ -14,6 +14,9 @@ pub const CROP_Y: u32 = 60;
 pub const CROP_W: u32 = 1130;
 pub const CROP_H: u32 = 540;
 
+pub const IMAGE_W: u32 = 3600;
+pub const IMAGE_H: u32 = 1800;
+
 pub const SAVE_PREDICT_IMAGE: bool = false;
 pub const BACKGROUND_IMG: &str = "NASAM_AVG.PNG";
 pub const BACKGROUND_IMG_ORIG: &str = "NASAM_AVG_ORIG.PNG";
