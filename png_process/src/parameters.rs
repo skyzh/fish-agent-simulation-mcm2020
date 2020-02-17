@@ -32,13 +32,13 @@ pub const DRAW_FISH: bool = false;
 pub const OUTPUT_FFMPEG_SERIES: bool = false;
 pub const OUTPUT_INDEX_IMAGE: bool = true;
 pub const USE_ORIG_BACKGROUND: bool = false;
-pub const JSON_DISABLE: bool = true;
+pub const JSON_DISABLE: bool = false;
 
 pub fn MAKE_JSON_AFTER(year: i32, month: i32) -> bool {
     if JSON_DISABLE {
         return false;
     }
-    if year % 10 == 0 && month == 3 {
+    if year % 10 == 0 && month == 9 {
         return true;
     }
     if year >= 2050 {

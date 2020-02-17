@@ -141,8 +141,10 @@ impl<'a> Living<'a> {
         let mut normal_dist = (1.0 - 2.0 * (p - 0.5).abs()).ln();
         if p < 0.5 {
             normal_dist = -normal_dist;
-        }*/
+        }
+        */
         let normal_dist: f64 = rng.sample(rand_distr::StandardNormal);
+//        let normal_dist: f64 = (rng.gen::<f64>() - 0.5) * 2.0;
         normal_dist * NORMAL_K
             + land.land_score[self.pos_at(x, y)] * LAND_SCORE_K
             + -(self.t_map.get_temperature(x, y) - optimal_temperature).abs() * TEMP_SCORE_K

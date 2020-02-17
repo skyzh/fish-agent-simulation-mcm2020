@@ -1,4 +1,3 @@
-// DATA FOR HERRING!
 pub const SCOTLAND_CENTER_X: u32 = 563;
 pub const SCOTLAND_CENTER_Y: u32 = 310;
 pub const SCOTLAND_RADIUS: f64 = 80.0;
