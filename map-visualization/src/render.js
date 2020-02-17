@@ -1,6 +1,7 @@
 const d3 = require('d3')
 const date = require('./config.js')
-const data = require(`./assets/${date}.json`).fish
+const base = require('./base')
+const data = require(`${base}/${date}.json`).fish
 const _ = require('lodash')
 const split = 5
 

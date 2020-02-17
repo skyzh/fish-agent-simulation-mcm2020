@@ -1,5 +1,6 @@
 const date = require('./config.js')
-const data = require(`./assets/${date}-living.json`).food
+const base = require('./base')
+const data = require(`${base}/${date}-living.json`).food
 // const data = require('./assets/land.json').land
 require('d3-contour')
 const d3 = require('d3')
