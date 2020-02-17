@@ -61,7 +61,7 @@ These figures are exported in pdf format, ready for use in LaTeX.
 ## Related Works
 
 The design of this agent simulation system is greatly inspired
-by my previous project [Gaming Theory on Matrix](https://github.com/skyzh/gaming-theory-on-matrix) 
+by my previous project [Game Theory on Matrix](https://github.com/skyzh/game-theory-on-matrix) 
 (aka. 基于记忆效应的空间囚徒困境中系统合作的演化)。In this fish agent
 simulation project, I leveraged real-world data and the Rust programming
 language to obtain a more stable and pratical model.
