@@ -25,7 +25,7 @@ Fish agents will automatically discover optimal location for themselves.
 By simulating this process with real world data we got a reasonable model
 for locating fish.
 
-We also proposed a Markov-based global warming model to predit temperature
+We also proposed a Markov-based global warming model to predict temperature
 of a given location at a given time from historical data.
 
 Combining the simulation process and global warming model, we successfully
