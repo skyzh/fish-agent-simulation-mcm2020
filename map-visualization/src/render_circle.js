@@ -28,8 +28,8 @@ module.exports = svg => {
     const pA = xyToLongLat(centerX, centerY)
     for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {  
-                const pB = xyToLongLat(x, y)   
-                data.push(geo.pointDistance(pA, pB, true))
+            const pB = xyToLongLat(x, y)   
+            data.push(geo.pointDistance(pA, pB, true))
         }
     }
     const densityData = d3.contours()

@@ -3,7 +3,7 @@ const date = require('./config.js')
 const base = require('./base')
 const data = require(`${base}/${date}.json`).fish
 const _ = require('lodash')
-const split = 5
+const split = 10
 
 module.exports = (svg) => {
     const ctx = d3.select(svg)
@@ -46,10 +46,10 @@ module.exports = (svg) => {
         ctx.selectAll('.fish')
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)
-            .attr('fill', d => `rgba(237,85,59,${d.cnt / 30})`)
+            .attr('fill', d => `rgba(237,85,59,${d.cnt / 20 / split})`)
             .attr('r', split / 4)
-            .attr('stroke', d => `rgba(100,100,100,${d.cnt / 30})`)
-            .attr('stroke-width', 0.5)
+            .attr('stroke', d => `rgba(100,100,100,${d.cnt / 20 / split})`)
+            .attr('stroke-width', split / 20)
     }
 
     renderNormalFish()

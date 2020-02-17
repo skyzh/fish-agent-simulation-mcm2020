@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <img class="float" src="./assets/2049-9.png" /> -->
-    <img class="float" src="../../png_process/result/herring/2040-9.png" />
+    <img class="float" src="../../png_process/result/herring/2010-9.png" />
     <img class="float" src="./assets/NASAM_AVG.png" />
     <svg class="float" ref="d3-svg" />
   </div>

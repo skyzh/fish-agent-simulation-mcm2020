@@ -8,23 +8,30 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r cars}
-data = read.csv('../map-visualization/result.csv')
-data$center_x = rep(0)
-data$center_y = rep(0)
-data$center_x[data$type == "orig"] = rep(563)
-data$center_y[data$type == "orig"] = rep(310)
-data$center_x[data$type == "moved"] = rep(592)
-data$center_y[data$type == "moved"] = rep(230)
-data$dist_to_center = sqrt((data$x - data$center_x)^2 + (data$y - data$center_y)^2)
+data = read.csv('./moving_or_not.csv')
+data$dist = data$dist / 1000
 ```
 
 ```{r}
-ggplot(data, aes(month, dist_to_center)) + 
-  geom_line(aes(linetype = type)) +
-  labs(y = "Distance", x = "Month", color = "Type\n") +
+ggplot(data[data$fish == "Mackerel", ], aes(month, n / dist, color = type)) + 
+  geom_line() +
+  geom_point() +
+  labs(y = "Count / Distance (km^-1)", x = "Month", linetype = "Location\n") +
+  xlim(0, 13) +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(plot.margin = unit(c(0,0,0,0), "cm")) +
   theme_minimal()
+ggsave('figure/distance_mackerel.pdf', width=6, height=3)
+
+ggplot(data[data$fish == "Herring", ], aes(month, n / dist, color = type)) + 
+  geom_line() +
+  geom_point() +
+  labs(y = "Count / Distance (km^-1)", x = "Month", linetype = "Location\n") +
+  xlim(0, 13) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
+ggsave('figure/distance_herring.pdf', width=6, height=3)
 ```
 
 ## Including Plots
