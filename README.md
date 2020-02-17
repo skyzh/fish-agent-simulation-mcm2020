@@ -62,9 +62,20 @@ These figures are exported in pdf format, ready for use in LaTeX.
 
 The design of this agent simulation system is greatly inspired
 by my previous project [Game Theory on Matrix](https://github.com/skyzh/game-theory-on-matrix) 
-(aka. 基于记忆效应的空间囚徒困境中系统合作的演化)。In this fish agent
+(aka. 基于记忆效应的空间囚徒困境中系统合作的演化). In this fish agent
 simulation project, I leveraged real-world data and the Rust programming
 language to obtain a more stable and pratical model.
+
+## Visualization
+
+<img width="1013" alt="food_score_explanation" src="https://user-images.githubusercontent.com/4198311/74668549-678c6600-51e0-11ea-9d39-dcd40a3c83da.png">
+
+<img width="983" alt="land_score_explanation" src="https://user-images.githubusercontent.com/4198311/74668556-6a875680-51e0-11ea-8868-28d43c48ca36.png">
+
+<img width="1220" alt="2040-8-fish" src="https://user-images.githubusercontent.com/4198311/74668559-6bb88380-51e0-11ea-8d39-2542daffe7fa.png">
+
+![animation](https://user-images.githubusercontent.com/4198311/74668562-6e1add80-51e0-11ea-83d1-39383d709c9d.gif)
+
 
 ## License
 
