@@ -53,6 +53,25 @@ earth location with simple arithmetic.
 
 ## Charts and Plotting
 
-This is done with R Studio and the R programming language. `ggplot`
-library is very helpful in producing high-quality and good-looking figures.
-Figures are exported in pdf format, ready for use in LaTeX.
+This is done with R Studio and the R programming language. R Markdown files
+are located in `analysis` folder. `ggplot` library is very helpful in
+producing high-quality and good-looking figures.
+These figures are exported in pdf format, ready for use in LaTeX.
+
+## Related Works
+
+The design of this agent simulation system is greatly inspired
+by my previous project [Gaming Theory on Matrix](https://github.com/skyzh/gaming-theory-on-matrix) 
+(aka. 基于记忆效应的空间囚徒困境中系统合作的演化)。In this fish agent
+simulation project, I leveraged real-world data and the Rust programming
+language to obtain a more stable and pratical model.
+
+## License
+
+The simulation program, data analysis scripts and visualization program
+is licensed under MIT.
+
+## Credit
+
+Thank my teammates T.T. Tang and R.L. Ye for designing this model in
+detail and coming up with ways to test and evaluate this model.
