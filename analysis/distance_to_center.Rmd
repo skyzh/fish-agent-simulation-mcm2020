@@ -1,0 +1,38 @@
+---
+title: "distance_to_center"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars}
+data = read.csv('../map-visualization/result.csv')
+data$center_x = rep(0)
+data$center_y = rep(0)
+data$center_x[data$type == "orig"] = rep(563)
+data$center_y[data$type == "orig"] = rep(310)
+data$center_x[data$type == "moved"] = rep(592)
+data$center_y[data$type == "moved"] = rep(230)
+data$dist_to_center = sqrt((data$x - data$center_x)^2 + (data$y - data$center_y)^2)
+```
+
+```{r}
+ggplot(data, aes(month, dist_to_center)) + 
+  geom_line(aes(linetype = type)) +
+  labs(y = "Distance", x = "Month", color = "Type\n") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
+  theme_minimal()
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

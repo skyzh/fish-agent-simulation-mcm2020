@@ -10,9 +10,9 @@ library(ggplot2)
 ```
 
 ```{r}
-data = read.csv("./log_process/result_1.csv")
-data2 = read.csv("./log_process/result_2.csv")
-data3 = read.csv("./log_process/result_3.csv")
+data = read.csv("../log_process/mackerel/result_1.csv")
+data2 = read.csv("../log_process/mackerel/result_2.csv")
+data3 = read.csv("../log_process/mackerel/result_3.csv")
 
 yr_mean = ddply(data, .(year), summarize,  left=mean(left), scotland=mean(scotland), temperature=mean(temperature))
 yr_mean = yr_mean[yr_mean$year > 2003, ]
