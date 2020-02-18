@@ -10,28 +10,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r cars}
 data = read.csv('./moving_or_not.csv')
 data$dist = data$dist / 1000
+data
 ```
 
 ```{r}
-ggplot(data[data$fish == "Mackerel", ], aes(month, n / dist, color = type)) + 
-  geom_line() +
+ggplot(data[data$type == "Original", ], aes(month, dist, color = fish)) + 
   geom_point() +
-  labs(y = "Count / Distance (km^-1)", x = "Month", linetype = "Location\n") +
+  labs(y = "Distance (km)", x = "Month", color = "Fish\n") +
   xlim(0, 13) +
+  ylim(0, 100) +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(plot.margin = unit(c(0,0,0,0), "cm")) +
   theme_minimal()
-ggsave('figure/distance_mackerel.pdf', width=6, height=3)
-
-ggplot(data[data$fish == "Herring", ], aes(month, n / dist, color = type)) + 
-  geom_line() +
-  geom_point() +
-  labs(y = "Count / Distance (km^-1)", x = "Month", linetype = "Location\n") +
-  xlim(0, 13) +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  theme(plot.margin = unit(c(0,0,0,0), "cm")) +
-  theme_minimal()
-ggsave('figure/distance_herring.pdf', width=6, height=3)
+ggsave('figure/distance_all.pdf', width=6, height=3)
 ```
 
 ## Including Plots

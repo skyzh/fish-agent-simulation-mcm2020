@@ -38,10 +38,10 @@ function analyze(m, ran, loc) {
             n += 1
         }
     })
-    console.log(`${sumdist / n},${n},${loc},${m},Herring`)
+    console.log(`${sumdist / n},${n},${loc},${m},Mackerel`)
 }
 
-console.log(xyToLongLat(1130, 540))
+console.log(xyToLongLat(592, 239))
 
 for (let i = 1; i <=12; i++) {
     analyze(i, isInRange, "Original")

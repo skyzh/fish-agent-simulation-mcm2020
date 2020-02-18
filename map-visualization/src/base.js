@@ -1,1 +1,1 @@
-module.exports = "./assets/herring"
+module.exports = "./assets/mackerel"
